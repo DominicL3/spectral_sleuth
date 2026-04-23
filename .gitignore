@@ -1,2 +1,23 @@
-ASCIIdata_splib07b
-ecospeclib*
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+.pytest_cache/
+.ruff_cache/
+
+# Environment files
+**/.env
+**/.env.local
+
+# Frontend
+node_modules/
+dist/
+
+# Raw spectral data archives (large, local only)
+data/ASCIIdata_splib07b/
+data/ecospeclib*
+data/*.zip
+
+# macOS
+.DS_Store
