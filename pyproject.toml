@@ -1,0 +1,12 @@
+[project]
+name = "spectral-sleuth-data"
+version = "0.1.0"
+description = "Backend for Spectral Sleuth quiz app"
+requires-python = ">=3.11"
+dependencies = [
+    "numpy>=1.26",
+    "scipy>=1.12",
+]
+
+[tool.uv]
+package = false
