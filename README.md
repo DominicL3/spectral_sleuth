@@ -17,9 +17,11 @@ multiple choice, category identification, and feature spotting.
 ## Setup
 
 ```bash
-# From the repo root
-uv sync                          # backend deps into .venv
-cd frontend && npm install       # frontend deps
+# Backend deps (uv workspace is in backend/)
+cd backend && uv sync
+
+# Frontend deps
+cd frontend && npm install
 
 # Environment
 cp backend/.env.example backend/.env     # then edit SECRET_KEY
@@ -31,7 +33,7 @@ cp frontend/.env.local.example frontend/.env.local
 ```bash
 # Terminal 1 — backend on :8000
 cd backend
-uv run --project .. uvicorn main:app --port 8000
+uv run uvicorn main:app --port 8000
 
 # Terminal 2 — frontend on :3000
 cd frontend
@@ -43,14 +45,24 @@ Open http://localhost:3000.
 ## Tests
 
 ```bash
-# Backend (from repo root)
+# Backend
+cd backend
 uv run pytest
-uv run ruff check backend/
-uv run ruff format --check backend/
+uv run ruff check .
+uv run ruff format --check .
 
 # Frontend
 cd frontend && npx tsc --noEmit && npm run build
 ```
+
+## Deploy (Render)
+
+A `render.yaml` Blueprint is included. To deploy:
+
+1. Push this repo to GitHub.
+2. In the Render dashboard, create a new **Blueprint** and point it at the repo.
+3. Render will create two services: `spectral-sleuth-api` (Python web service) and `spectral-sleuth` (static site).
+4. After the first deploy, confirm the service URLs match the ones in `render.yaml` (`spectral-sleuth-api.onrender.com` / `spectral-sleuth.onrender.com`). If Render appended a suffix, update `ALLOWED_ORIGINS` on the API service and `VITE_API_URL` on the static site, then redeploy.
 
 ## Layout
 
