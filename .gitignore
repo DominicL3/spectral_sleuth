@@ -21,3 +21,7 @@ data/*.zip
 
 # macOS
 .DS_Store
+
+# Playwright / local test artifacts
+.playwright-mcp/
+/*.png
