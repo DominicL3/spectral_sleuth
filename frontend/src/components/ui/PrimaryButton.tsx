@@ -1,4 +1,4 @@
-type Variant = "solid" | "ghost" | "soft";
+type Variant = "solid" | "ghost";
 
 interface Props {
   children: React.ReactNode;
@@ -40,10 +40,6 @@ export default function PrimaryButton({
       background: "transparent",
       color: "var(--color-ink-soft)",
       border: "1px solid var(--color-border)",
-    },
-    soft: {
-      background: "var(--color-accent-soft)",
-      color: "var(--color-accent)",
     },
   };
 

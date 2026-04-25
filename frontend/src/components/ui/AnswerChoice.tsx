@@ -1,8 +1,6 @@
 interface Props {
   label: string;
   selected?: boolean;
-  revealed?: boolean;
-  correct?: boolean;
   onClick?: () => void;
   disabled?: boolean;
 }
@@ -10,28 +8,12 @@ interface Props {
 export default function AnswerChoice({
   label,
   selected = false,
-  revealed = false,
-  correct = false,
   onClick,
   disabled,
 }: Props) {
-  let bg = "var(--color-surface)";
-  let border = "var(--color-border)";
-  let color = "var(--color-ink)";
-
-  if (revealed && correct) {
-    bg = "var(--color-correct-soft)";
-    border = "var(--color-correct)";
-    color = "var(--color-correct)";
-  } else if (revealed && selected && !correct) {
-    bg = "var(--color-wrong-soft)";
-    border = "var(--color-wrong)";
-    color = "var(--color-wrong)";
-  } else if (selected) {
-    bg = "var(--color-accent-soft)";
-    border = "var(--color-accent)";
-    color = "var(--color-accent)";
-  }
+  const bg = selected ? "var(--color-accent-soft)" : "var(--color-surface)";
+  const border = selected ? "var(--color-accent)" : "var(--color-border)";
+  const color = selected ? "var(--color-accent)" : "var(--color-ink)";
 
   return (
     <button
@@ -53,12 +35,10 @@ export default function AnswerChoice({
         lineHeight: 1.3,
       }}
       onMouseEnter={(e) => {
-        if (!disabled && !revealed)
-          e.currentTarget.style.borderColor = "var(--color-accent)";
+        if (!disabled) e.currentTarget.style.borderColor = "var(--color-accent)";
       }}
       onMouseLeave={(e) => {
-        if (!selected && !revealed)
-          e.currentTarget.style.borderColor = "var(--color-border)";
+        if (!selected) e.currentTarget.style.borderColor = "var(--color-border)";
       }}
     >
       {label}

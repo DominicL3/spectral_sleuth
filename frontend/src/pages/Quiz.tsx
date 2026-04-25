@@ -10,10 +10,6 @@ import ScoreStat from "../components/ui/ScoreStat";
 
 type Phase = "loading" | "answering" | "evaluating" | "showing_result";
 
-interface ErrorState {
-  message: string;
-}
-
 function ctrlBtn(active: boolean): React.CSSProperties {
   return {
     padding: "5px 10px",
@@ -49,7 +45,7 @@ export default function Quiz() {
   const [selectedWavelength, setSelectedWavelength] = useState<number | null>(null);
   const [continuumRemoved, setContinuumRemoved] = useState(false);
 
-  const [error, setError] = useState<ErrorState | null>(null);
+  const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
     if (phase !== "loading") return;
@@ -71,7 +67,7 @@ export default function Quiz() {
         setPhase("answering");
       } catch (err) {
         if (cancelled) return;
-        setError({ message: err instanceof Error ? err.message : "Failed to load question" });
+        setError(err instanceof Error ? err.message : "Failed to load question");
         setPhase("answering");
       }
     })();
@@ -104,7 +100,7 @@ export default function Quiz() {
       });
       setPhase("showing_result");
     } catch (err) {
-      setError({ message: err instanceof Error ? err.message : "Failed to evaluate answer" });
+      setError(err instanceof Error ? err.message : "Failed to evaluate answer");
       setPhase("answering");
     }
   }
@@ -177,7 +173,7 @@ export default function Quiz() {
             }}
           >
             <span style={{ fontFamily: "var(--font-sans)", fontSize: 13, color: "var(--color-wrong)" }}>
-              {error.message}
+              {error}
             </span>
             <button
               onClick={handleRetry}

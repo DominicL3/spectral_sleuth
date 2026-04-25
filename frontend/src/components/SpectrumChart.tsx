@@ -14,7 +14,6 @@ export interface SpectrumChartProps {
   atmosphericGaps?: [number, number][];
   selectedWavelength?: number | null;
   onFeatureClick?: (wavelength_nm: number) => void;
-  showRegionLabels?: boolean;
   resetZoomRef?: React.MutableRefObject<(() => void) | null>;
 }
 
@@ -27,11 +26,6 @@ interface GapRect {
   x: number;
   width: number;
   cx: number;
-  label: string;
-}
-
-interface RegionLabel {
-  x: number;
   label: string;
 }
 
@@ -62,23 +56,14 @@ function clampPan(min: number, max: number, lo: number, hi: number): [number, nu
   return [min, max];
 }
 
-const REGIONS: [number, number, string][] = [
-  [380, 1000, "VNIR"],
-  [1000, 1800, "SWIR-1"],
-  [1800, 2500, "SWIR-2"],
-];
-
 // Design token values (must match index.css) — used for canvas (uPlot) and SVG overlays
 const TOKEN = {
   accent: "oklch(0.62 0.13 40)",
   accentSoft: "oklch(0.94 0.04 50 / 0.9)",
-  accentBorder: "oklch(0.62 0.13 40)",
   inkSoft: "oklch(0.48 0.02 55)",
   gridLine: "oklch(0.88 0.015 65)",
   gapFill: "oklch(0.88 0.015 65 / 0.45)",
-  surface: "oklch(1 0 0)",
   font: "'IBM Plex Sans', 'Helvetica Neue', sans-serif",
-  fontMono: "'IBM Plex Mono', Menlo, monospace",
 };
 
 export default function SpectrumChart({
@@ -92,7 +77,6 @@ export default function SpectrumChart({
   atmosphericGaps = DEFAULT_GAPS,
   selectedWavelength = null,
   onFeatureClick,
-  showRegionLabels = false,
   resetZoomRef,
 }: SpectrumChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
@@ -102,7 +86,6 @@ export default function SpectrumChart({
   const [cursor, setCursor] = useState<CursorReadout | null>(null);
   const [svgSize, setSvgSize] = useState({ width: 0, height: 0 });
   const [gapRects, setGapRects] = useState<GapRect[]>([]);
-  const [regionLabels, setRegionLabels] = useState<RegionLabel[]>([]);
   const [hintLines, setHintLines] = useState<HintLine[]>([]);
   const [selectedMarkerX, setSelectedMarkerX] = useState<number | null>(null);
   const [plotBbox, setPlotBbox] = useState({
@@ -163,16 +146,6 @@ export default function SpectrumChart({
       })
       .filter((r): r is GapRect => r !== null);
     setGapRects(newGaps);
-
-    const newRegions: RegionLabel[] = REGIONS
-      .map(([lo, hi, label]) => {
-        const x1 = plotLeft + (u.valToPos(lo, "x") as number);
-        const x2 = plotLeft + (u.valToPos(hi, "x") as number);
-        if (!isFinite(x1) || !isFinite(x2)) return null;
-        return { x: (x1 + x2) / 2, label } as RegionLabel;
-      })
-      .filter((r): r is RegionLabel => r !== null);
-    setRegionLabels(newRegions);
 
     if (features && features.length > 0) {
       const newHints: HintLine[] = features
@@ -499,22 +472,6 @@ export default function SpectrumChart({
           </g>
         ))}
 
-        {/* Region labels */}
-        {showRegionLabels &&
-          regionLabels.map((r, i) => (
-            <text
-              key={i}
-              x={r.x}
-              y={svgSize.height - 6}
-              textAnchor="middle"
-              fontSize="10"
-              fill={TOKEN.inkSoft}
-              style={{ fontFamily: TOKEN.font }}
-            >
-              {r.label}
-            </text>
-          ))}
-
         {/* Hint overlay — dashed lines with accent-soft pill labels */}
         <g style={{ opacity: showHints ? 1 : 0, transition: "opacity 350ms ease" }}>
           {hintLines.map((h, i) => {
@@ -533,7 +490,7 @@ export default function SpectrumChart({
                 <g transform={`translate(${h.x + 4}, ${plotTop + 14 + (i % 2) * 14})`}>
                   <rect x="0" y="-8" width={pillW} height="14" rx="2"
                     fill={TOKEN.accentSoft}
-                    stroke={TOKEN.accentBorder} strokeOpacity="0.3"
+                    stroke={TOKEN.accent} strokeOpacity="0.3"
                   />
                   <text x="5" y="2"
                     fontSize="11" fontWeight="500" fill={TOKEN.accent}

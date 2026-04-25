@@ -8,7 +8,6 @@ import type {
   QuestionResponse,
   Result,
   SpectrumFull,
-  SpectrumIndexEntry,
 } from "./types";
 
 const BASE_URL = (import.meta.env.VITE_API_URL as string) || "http://localhost:8000";
@@ -30,10 +29,6 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
 
 export async function getHealth(): Promise<{ status: string }> {
   return request<{ status: string }>("/health");
-}
-
-export async function listSpectra(): Promise<SpectrumIndexEntry[]> {
-  return request<SpectrumIndexEntry[]>("/spectra");
 }
 
 export async function getSpectrum(id: string): Promise<SpectrumFull> {

@@ -6,18 +6,11 @@ import PrimaryButton from "../components/ui/PrimaryButton";
 
 type BackendStatus = "checking" | "ok" | "error" | "warming";
 
-const STATUS_LABELS: Record<BackendStatus, string> = {
-  checking: "● Connecting…",
-  warming: "● Warming up…",
-  ok: "● Connected",
-  error: "● Offline",
-};
-
-const STATUS_COLORS: Record<BackendStatus, string> = {
-  checking: "var(--color-ink-soft)",
-  warming: "oklch(0.72 0.13 75)",
-  ok: "var(--color-correct)",
-  error: "var(--color-wrong)",
+const STATUS: Record<BackendStatus, { label: string; color: string }> = {
+  checking: { label: "● Connecting…", color: "var(--color-ink-soft)" },
+  warming: { label: "● Warming up…", color: "oklch(0.72 0.13 75)" },
+  ok: { label: "● Connected", color: "var(--color-correct)" },
+  error: { label: "● Offline", color: "var(--color-wrong)" },
 };
 
 export default function Landing() {
@@ -111,13 +104,13 @@ export default function Landing() {
           style={{
             fontFamily: "var(--font-mono)",
             fontSize: 11,
-            color: STATUS_COLORS[status],
+            color: STATUS[status].color,
             letterSpacing: "0.08em",
             marginTop: 8,
             textTransform: "uppercase",
           }}
         >
-          {STATUS_LABELS[status]}
+          {STATUS[status].label}
         </div>
 
         {status === "error" && (
