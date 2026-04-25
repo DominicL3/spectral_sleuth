@@ -94,9 +94,8 @@ export default function Landing() {
             margin: 0,
           }}
         >
-          Train your eye to recognize reflectance spectra from minerals, vegetation,
-          soils, water, and more. Identify materials from their spectral signatures
-          across the 380–2500&nbsp;nm range.
+          Train yourself to recognize different materials from their spectral
+          signatures across the VSWIR (380-2500 nm) spectral range.
         </p>
 
         <div style={{ display: "flex", gap: 12, justifyContent: "center", marginTop: 12 }}>
