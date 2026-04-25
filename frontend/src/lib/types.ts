@@ -19,14 +19,6 @@ export interface DiagnosticFeature {
   description: string;
 }
 
-export interface SpectrumIndexEntry {
-  id: string;
-  name: string;
-  category: string;
-  subcategory: string;
-  display_name: string;
-}
-
 export interface SpectrumFull {
   id: string;
   name: string;
@@ -85,11 +77,3 @@ export interface Result {
   diagnostic_features: DiagnosticFeature[];
 }
 
-// ---------------------------------------------------------------------------
-// Error model
-// ---------------------------------------------------------------------------
-
-export interface ErrorResponse {
-  error: string;
-  detail: string | null;
-}

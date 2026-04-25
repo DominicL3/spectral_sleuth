@@ -22,8 +22,9 @@ from quiz.modes.category_id import CategoryIDMode  # noqa: E402
 from quiz.modes.feature_spotting import FeatureSpottingMode  # noqa: E402
 from quiz.modes.multiple_choice import MultipleChoiceMode  # noqa: E402
 from quiz.schemas import (  # noqa: E402
-    EvaluateRequest,
+    DiagnosticFeature,
     ErrorResponse,
+    EvaluateRequest,
     QuestionRequest,
     QuestionResponse,
     Result,
@@ -161,53 +162,26 @@ async def evaluate_answer(body: EvaluateRequest) -> Result:
             content=ErrorResponse(error="token_expired", detail=str(exc)).model_dump(),
         )
 
-    # Dispatch to the correct mode
+    # Dispatch to the correct mode (token signature already proves mode_id is valid)
     assert engine is not None, "Engine not initialised"
-    mode_map = {m.mode_id: m for m in engine.modes}
-    mode_id = payload["mode"]
-    if mode_id not in mode_map:
-        return JSONResponse(
-            status_code=400,
-            content=ErrorResponse(
-                error="malformed_token", detail=f"Unknown mode: {mode_id!r}"
-            ).model_dump(),
-        )
-
+    mode = next(m for m in engine.modes if m.mode_id == payload["mode"])
     spectrum = library.get_by_id(payload["spectrum_id"])
-    result = mode_map[mode_id].evaluate(body.user_answer, payload, spectrum)
+    result = mode.evaluate(body.user_answer, payload, spectrum)
 
     # Apply hint penalty: correct + hint used → subtract 5
     if body.hint_used and result.correct:
-        result = Result(
-            correct=result.correct,
-            correct_answer=result.correct_answer,
-            score_delta=result.score_delta - 5,
-            explanation=result.explanation,
-            diagnostic_features=result.diagnostic_features,
-        )
+        result = result.model_copy(update={"score_delta": result.score_delta - 5})
 
     # Fill explanation from spectrum if mode didn't provide one
     if not result.explanation:
-        result = Result(
-            correct=result.correct,
-            correct_answer=result.correct_answer,
-            score_delta=result.score_delta,
-            explanation=spectrum.get("explanation", ""),
-            diagnostic_features=result.diagnostic_features,
-        )
+        result = result.model_copy(update={"explanation": spectrum.get("explanation", "")})
 
     # Fill diagnostic_features from spectrum if empty
     if not result.diagnostic_features:
-        from quiz.schemas import DiagnosticFeature
-
-        result = Result(
-            correct=result.correct,
-            correct_answer=result.correct_answer,
-            score_delta=result.score_delta,
-            explanation=result.explanation,
-            diagnostic_features=[
+        result = result.model_copy(update={
+            "diagnostic_features": [
                 DiagnosticFeature(**f) for f in spectrum.get("diagnostic_features", [])
             ],
-        )
+        })
 
     return result

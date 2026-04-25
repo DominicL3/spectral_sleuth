@@ -45,7 +45,7 @@ class FeatureSpottingMode(QuestionMode):
 
         try:
             user_nm = float(user_answer)
-        except ValueError, TypeError:
+        except (ValueError, TypeError):
             return Result(
                 correct=False,
                 correct_answer=correct_answer_str,
