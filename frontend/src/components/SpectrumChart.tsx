@@ -15,6 +15,7 @@ export interface SpectrumChartProps {
   selectedWavelength?: number | null;
   onFeatureClick?: (wavelength_nm: number) => void;
   showRegionLabels?: boolean;
+  resetZoomRef?: React.MutableRefObject<(() => void) | null>;
 }
 
 interface CursorReadout {
@@ -47,6 +48,19 @@ const REGIONS: [number, number, string][] = [
   [1800, 2500, "SWIR-2"],
 ];
 
+// Design token values (must match index.css) — used for canvas (uPlot) and SVG overlays
+const TOKEN = {
+  accent: "oklch(0.62 0.13 40)",
+  accentSoft: "oklch(0.94 0.04 50 / 0.9)",
+  accentBorder: "oklch(0.62 0.13 40)",
+  inkSoft: "oklch(0.48 0.02 55)",
+  gridLine: "oklch(0.88 0.015 65)",
+  gapFill: "oklch(0.88 0.015 65 / 0.45)",
+  surface: "oklch(1 0 0)",
+  font: "'IBM Plex Sans', 'Helvetica Neue', sans-serif",
+  fontMono: "'IBM Plex Mono', Menlo, monospace",
+};
+
 export default function SpectrumChart({
   wavelengths,
   reflectance,
@@ -59,6 +73,7 @@ export default function SpectrumChart({
   selectedWavelength = null,
   onFeatureClick,
   showRegionLabels = false,
+  resetZoomRef,
 }: SpectrumChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<HTMLDivElement>(null);
@@ -78,21 +93,21 @@ export default function SpectrumChart({
     plotHeight: 0,
   });
 
-  // Stable ref for plotBbox so click handler doesn't go stale
   const plotBboxRef = useRef(plotBbox);
-  plotBboxRef.current = plotBbox;
+  const atmosphericGapsRef = useRef(atmosphericGaps);
+  const diagnosticFeaturesRef = useRef(diagnosticFeatures);
+  const selectedWavelengthRef = useRef(selectedWavelength);
 
-  // Derive full x-range from wavelengths
+  // Keep refs in sync with latest prop values so stable callbacks don't go stale
+  useEffect(() => {
+    plotBboxRef.current = plotBbox;
+    atmosphericGapsRef.current = atmosphericGaps;
+    diagnosticFeaturesRef.current = diagnosticFeatures;
+    selectedWavelengthRef.current = selectedWavelength;
+  });
+
   const xMin = wavelengths[0] ?? 380;
   const xMax = wavelengths[wavelengths.length - 1] ?? 2500;
-
-  // Keep refs for props that recomputeOverlay needs (to avoid stale closures)
-  const atmosphericGapsRef = useRef(atmosphericGaps);
-  atmosphericGapsRef.current = atmosphericGaps;
-  const diagnosticFeaturesRef = useRef(diagnosticFeatures);
-  diagnosticFeaturesRef.current = diagnosticFeatures;
-  const selectedWavelengthRef = useRef(selectedWavelength);
-  selectedWavelengthRef.current = selectedWavelength;
 
   const recomputeOverlay = useCallback(() => {
     const u = uplotRef.current;
@@ -108,7 +123,6 @@ export default function SpectrumChart({
     const features = diagnosticFeaturesRef.current;
     const selWl = selectedWavelengthRef.current;
 
-    // Atmospheric gap rects
     const newGaps: GapRect[] = gaps
       .map(([lo, hi]) => {
         const x1 = plotLeft + (u.valToPos(lo, "x") as number);
@@ -118,18 +132,17 @@ export default function SpectrumChart({
         const right = Math.max(x1, x2);
         const clampedLeft = Math.max(left, plotLeft);
         const clampedRight = Math.min(right, plotLeft + plotWidth);
-        const width = Math.max(0, clampedRight - clampedLeft);
+        if (clampedRight <= clampedLeft) return null;
         return {
           x: clampedLeft,
-          width,
-          cx: clampedLeft + width / 2,
+          width: clampedRight - clampedLeft,
+          cx: (clampedLeft + clampedRight) / 2,
           label: "H₂O",
         } as GapRect;
       })
-      .filter((g): g is GapRect => g !== null);
+      .filter((r): r is GapRect => r !== null);
     setGapRects(newGaps);
 
-    // Region labels
     const newRegions: RegionLabel[] = REGIONS
       .map(([lo, hi, label]) => {
         const x1 = plotLeft + (u.valToPos(lo, "x") as number);
@@ -140,7 +153,6 @@ export default function SpectrumChart({
       .filter((r): r is RegionLabel => r !== null);
     setRegionLabels(newRegions);
 
-    // Hint lines
     if (features && features.length > 0) {
       const newHints: HintLine[] = features
         .map((f) => {
@@ -154,7 +166,6 @@ export default function SpectrumChart({
       setHintLines([]);
     }
 
-    // Selected wavelength marker
     if (selWl !== null) {
       const x = plotLeft + (u.valToPos(selWl, "x") as number);
       setSelectedMarkerX(isFinite(x) ? x : null);
@@ -162,10 +173,15 @@ export default function SpectrumChart({
       setSelectedMarkerX(null);
     }
 
-    // Update SVG size and plot bbox
     setSvgSize({ width: u.width, height: u.height });
     setPlotBbox({ plotLeft, plotTop, plotWidth, plotHeight });
   }, []);
+
+  function handleResetZoom() {
+    const u = uplotRef.current;
+    if (!u) return;
+    u.setScale("x", { min: xMin, max: xMax });
+  }
 
   // Mount uPlot once
   useEffect(() => {
@@ -184,22 +200,31 @@ export default function SpectrumChart({
         { label: "λ (nm)" },
         {
           label: "Reflectance",
-          stroke: "#334155",
-          width: 1.5,
+          stroke: TOKEN.accent,
+          width: 1.6,
+          fill: "oklch(0.62 0.13 40 / 0.07)",
         },
       ],
       axes: [
         {
+          stroke: TOKEN.inkSoft,
+          font: `12px ${TOKEN.font}`,
+          labelFont: `500 13px ${TOKEN.font}`,
           label: "Wavelength (nm)",
-          labelSize: 18,
-          size: 40,
+          labelSize: 22,
+          size: 48,
+          grid: { stroke: TOKEN.gridLine, width: 1, dash: [2, 3] },
+          ticks: { stroke: TOKEN.inkSoft, width: 1 },
         },
         {
-          label: continuumRemoved
-            ? "Continuum-removed reflectance"
-            : "Reflectance (0–1)",
-          labelSize: 18,
-          size: 70,
+          stroke: TOKEN.inkSoft,
+          font: `12px ${TOKEN.font}`,
+          labelFont: `500 13px ${TOKEN.font}`,
+          label: continuumRemoved ? "Continuum-removed reflectance" : "Reflectance (0–1)",
+          labelSize: 22,
+          size: 72,
+          grid: { stroke: TOKEN.gridLine, width: 1, dash: [2, 3] },
+          ticks: { stroke: TOKEN.inkSoft, width: 1 },
         },
       ],
       scales: {
@@ -232,9 +257,14 @@ export default function SpectrumChart({
     );
     uplotRef.current = u;
 
+    if (resetZoomRef) {
+      resetZoomRef.current = handleResetZoom;
+    }
+
     return () => {
       u.destroy();
       uplotRef.current = null;
+      if (resetZoomRef) resetZoomRef.current = null;
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -258,7 +288,7 @@ export default function SpectrumChart({
     recomputeOverlay();
   }, [selectedWavelength, diagnosticFeatures, recomputeOverlay]);
 
-  // ResizeObserver to keep uPlot and SVG sized to container
+  // ResizeObserver
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -275,7 +305,6 @@ export default function SpectrumChart({
     return () => ro.disconnect();
   }, [recomputeOverlay]);
 
-  // Handle click on SVG click-catcher for feature spotting
   function handlePlotClick(e: React.MouseEvent<SVGRectElement>) {
     if (mode !== "feature_spotting" || !onFeatureClick) return;
     const u = uplotRef.current;
@@ -293,149 +322,144 @@ export default function SpectrumChart({
     }
   }
 
-  // Reset zoom
-  function handleResetZoom() {
-    const u = uplotRef.current;
-    if (!u) return;
-    u.setScale("x", { min: xMin, max: xMax });
-  }
-
   const { plotLeft, plotTop, plotWidth, plotHeight } = plotBbox;
 
   return (
-    <div className="flex flex-col gap-2 w-full">
-      {/* Controls row */}
-      <div className="flex items-center gap-2 flex-wrap">
-        <button
-          onClick={handleResetZoom}
-          className="px-3 py-1 text-xs font-medium bg-white border border-slate-300 rounded hover:bg-slate-50 active:bg-slate-100 text-slate-700 transition-colors"
-        >
-          Reset zoom
-        </button>
-      </div>
+    <div
+      ref={containerRef}
+      className="relative w-full h-[400px] md:h-[500px]"
+    >
+      {/* uPlot mounts here */}
+      <div ref={chartRef} className="absolute inset-0 overflow-hidden" />
 
-      {/* Chart container */}
-      <div
-        ref={containerRef}
-        className="relative w-full h-[400px] md:h-[500px]"
+      {/* SVG overlay */}
+      <svg
+        ref={svgRef}
+        className="absolute inset-0 pointer-events-none"
+        width={svgSize.width}
+        height={svgSize.height}
+        style={{ width: svgSize.width, height: svgSize.height }}
       >
-        {/* uPlot mounts here */}
-        <div ref={chartRef} className="absolute inset-0 overflow-hidden" />
+        {/* Feature spotting click-catcher */}
+        {mode === "feature_spotting" && plotWidth > 0 && (
+          <rect
+            x={plotLeft}
+            y={plotTop}
+            width={plotWidth}
+            height={plotHeight}
+            fill="transparent"
+            style={{ pointerEvents: "auto", cursor: "crosshair" }}
+            onClick={handlePlotClick}
+          />
+        )}
 
-        {/* SVG overlay */}
-        <svg
-          ref={svgRef}
-          className="absolute inset-0 pointer-events-none"
-          width={svgSize.width}
-          height={svgSize.height}
-          style={{ width: svgSize.width, height: svgSize.height }}
-        >
-          {/* Feature spotting click-catcher — pointer-events-auto */}
-          {mode === "feature_spotting" && plotWidth > 0 && (
+        {/* Atmospheric gap shading */}
+        {gapRects.map((gap, i) => (
+          <g key={i}>
             <rect
-              x={plotLeft}
+              x={gap.x}
               y={plotTop}
-              width={plotWidth}
+              width={gap.width}
               height={plotHeight}
-              fill="transparent"
-              style={{ pointerEvents: "auto", cursor: "crosshair" }}
-              onClick={handlePlotClick}
+              fill={TOKEN.gapFill}
             />
-          )}
+            {gap.width > 20 && (
+              <text
+                x={gap.cx}
+                y={plotTop + 16}
+                textAnchor="middle"
+                fontSize="11"
+                fill={TOKEN.inkSoft}
+                style={{ fontFamily: TOKEN.font }}
+              >
+                {gap.label}
+              </text>
+            )}
+          </g>
+        ))}
 
-          {/* Atmospheric gap shading */}
-          {gapRects.map((gap, i) => (
-            <g key={i}>
-              <rect
-                x={gap.x}
-                y={plotTop}
-                width={gap.width}
-                height={plotHeight}
-                fill="rgba(148, 163, 184, 0.25)"
-              />
-              {gap.width > 20 && (
-                <text
-                  x={gap.cx}
-                  y={plotTop + 16}
-                  textAnchor="middle"
-                  fontSize="10"
-                  fill="rgba(100,116,139,0.8)"
-                  fontFamily="sans-serif"
-                >
-                  {gap.label}
-                </text>
-              )}
-            </g>
+        {/* Region labels */}
+        {showRegionLabels &&
+          regionLabels.map((r, i) => (
+            <text
+              key={i}
+              x={r.x}
+              y={svgSize.height - 6}
+              textAnchor="middle"
+              fontSize="10"
+              fill={TOKEN.inkSoft}
+              style={{ fontFamily: TOKEN.font }}
+            >
+              {r.label}
+            </text>
           ))}
 
-          {/* Region labels — gated on showRegionLabels */}
-          {showRegionLabels &&
-            regionLabels.map((r, i) => (
-              <text
-                key={i}
-                x={r.x}
-                y={svgSize.height - 6}
-                textAnchor="middle"
-                fontSize="10"
-                fill="rgba(100,116,139,0.6)"
-                fontFamily="sans-serif"
-              >
-                {r.label}
-              </text>
-            ))}
-
-          {/* Hint overlay — dashed lines with labels, fade-in transition */}
-          <g
-            style={{
-              opacity: showHints ? 1 : 0,
-              transition: "opacity 300ms ease",
-            }}
-          >
-            {hintLines.map((h, i) => (
+        {/* Hint overlay — dashed lines with accent-soft pill labels */}
+        <g style={{ opacity: showHints ? 1 : 0, transition: "opacity 350ms ease" }}>
+          {hintLines.map((h, i) => {
+            const truncated = h.label.length > 24 ? h.label.slice(0, 22) + "…" : h.label;
+            const pillW = Math.min(truncated.length * 5.5 + 10, 160);
+            return (
               <g key={i}>
                 <line
-                  x1={h.x}
-                  y1={plotTop}
-                  x2={h.x}
-                  y2={plotTop + plotHeight}
-                  stroke="#f59e0b"
-                  strokeWidth="1.5"
+                  x1={h.x} y1={plotTop}
+                  x2={h.x} y2={plotTop + plotHeight}
+                  stroke={TOKEN.accent}
+                  strokeWidth="1.2"
                   strokeDasharray="4 3"
+                  opacity="0.75"
                 />
-                <text
-                  x={h.x + 3}
-                  y={plotTop + 14}
-                  fontSize="9"
-                  fill="#d97706"
-                  fontFamily="sans-serif"
-                >
-                  {h.label.length > 20 ? h.label.slice(0, 18) + "…" : h.label}
-                </text>
+                <g transform={`translate(${h.x + 4}, ${plotTop + 14 + (i % 2) * 14})`}>
+                  <rect x="0" y="-8" width={pillW} height="14" rx="2"
+                    fill={TOKEN.accentSoft}
+                    stroke={TOKEN.accentBorder} strokeOpacity="0.3"
+                  />
+                  <text x="5" y="2"
+                    fontSize="11" fontWeight="500" fill={TOKEN.accent}
+                    style={{ fontFamily: TOKEN.font }}
+                  >
+                    {truncated}
+                  </text>
+                </g>
               </g>
-            ))}
-          </g>
+            );
+          })}
+        </g>
 
-          {/* Selected wavelength marker (feature spotting) */}
-          {selectedMarkerX !== null && (
-            <line
-              x1={selectedMarkerX}
-              y1={plotTop}
-              x2={selectedMarkerX}
-              y2={plotTop + plotHeight}
-              stroke="#2563eb"
-              strokeWidth="2"
-              style={{ pointerEvents: "none" }}
-            />
-          )}
-        </svg>
-
-        {/* Crosshair readout — fixed top-right corner */}
-        {cursor && (
-          <div className="absolute top-2 right-2 bg-white/90 border border-slate-200 rounded px-2 py-1 text-xs font-mono text-slate-700 pointer-events-none select-none z-10">
-            &lambda; = {cursor.lambda} nm &nbsp; R = {cursor.r.toFixed(3)}
-          </div>
+        {/* Selected wavelength marker (feature spotting) */}
+        {selectedMarkerX !== null && (
+          <line
+            x1={selectedMarkerX} y1={plotTop}
+            x2={selectedMarkerX} y2={plotTop + plotHeight}
+            stroke={TOKEN.accent}
+            strokeWidth="2"
+            style={{ pointerEvents: "none" }}
+          />
         )}
-      </div>
+      </svg>
+
+      {/* Crosshair readout */}
+      {cursor && (
+        <div
+          style={{
+            position: "absolute",
+            top: 8,
+            right: 8,
+            padding: "4px 8px",
+            background: "var(--color-surface)",
+            border: "1px solid var(--color-border)",
+            borderRadius: 4,
+            fontFamily: "var(--font-mono)",
+            fontSize: 11,
+            color: TOKEN.inkSoft,
+            pointerEvents: "none",
+            userSelect: "none",
+            zIndex: 10,
+          }}
+        >
+          λ = {cursor.lambda} nm &nbsp; R = {cursor.r.toFixed(3)}
+        </div>
+      )}
     </div>
   );
 }

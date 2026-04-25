@@ -1,4 +1,5 @@
 import type { FeatureSpottingPayload } from "../../lib/types";
+import PrimaryButton from "../ui/PrimaryButton";
 
 interface Props {
   payload: FeatureSpottingPayload;
@@ -19,44 +20,76 @@ export default function FeatureSpottingUI({
   }
 
   return (
-    <div className="flex flex-col gap-4">
-      <div className="bg-slate-50 border border-slate-200 rounded-lg p-4 flex flex-col gap-2">
-        <span className="text-xs font-semibold text-slate-500 uppercase tracking-wide">
+    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      <div
+        style={{
+          padding: 14,
+          background: "var(--color-surface-2)",
+          border: "1px solid var(--color-border-soft)",
+          borderRadius: 6,
+          display: "flex",
+          flexDirection: "column",
+          gap: 6,
+        }}
+      >
+        <span
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: 10,
+            color: "var(--color-ink-soft)",
+            textTransform: "uppercase",
+            letterSpacing: "0.08em",
+          }}
+        >
           Feature to find
         </span>
-        <span className="text-lg font-bold text-slate-800">
+        <span
+          style={{
+            fontFamily: "var(--font-sans)",
+            fontWeight: 600,
+            fontSize: 16,
+            color: "var(--color-ink)",
+          }}
+        >
           {payload.feature_label}
         </span>
-        <p className="text-sm text-slate-600">
+        <p style={{ fontFamily: "var(--font-sans)", fontSize: 13, color: "var(--color-ink-soft)", margin: 0 }}>
           Click the wavelength on the chart where you see this feature.
         </p>
       </div>
 
       {selectedWavelength !== null ? (
-        <div className="text-sm text-slate-700 font-medium">
+        <div
+          style={{
+            fontFamily: "var(--font-mono)",
+            fontSize: 12,
+            color: "var(--color-ink-soft)",
+          }}
+        >
           Selected:{" "}
-          <span className="font-bold text-slate-800">
+          <span style={{ color: "var(--color-ink)", fontWeight: 500 }}>
             {Math.round(selectedWavelength)} nm
           </span>
         </div>
       ) : (
-        <div className="text-sm text-slate-400 italic">
+        <div
+          style={{
+            fontFamily: "var(--font-sans)",
+            fontSize: 13,
+            color: "var(--color-ink-soft)",
+            fontStyle: "italic",
+          }}
+        >
           No wavelength selected yet
         </div>
       )}
 
-      <button
+      <PrimaryButton
         onClick={handleSubmit}
         disabled={selectedWavelength === null || disabled}
-        className={[
-          "px-6 py-3 rounded-lg font-semibold text-sm transition-colors",
-          selectedWavelength !== null && !disabled
-            ? "bg-slate-800 text-white hover:bg-slate-700 active:bg-slate-900"
-            : "bg-slate-100 text-slate-400 cursor-not-allowed",
-        ].join(" ")}
       >
         Submit Answer
-      </button>
+      </PrimaryButton>
     </div>
   );
 }

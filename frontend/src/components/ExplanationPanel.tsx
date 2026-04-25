@@ -1,4 +1,5 @@
 import type { Result } from "../lib/types";
+import PrimaryButton from "./ui/PrimaryButton";
 
 interface Props {
   result: Result;
@@ -7,47 +8,60 @@ interface Props {
 
 export default function ExplanationPanel({ result, onNext }: Props) {
   return (
-    <div className="flex flex-col gap-4">
+    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
       {/* Correct/incorrect banner */}
       <div
-        className={[
-          "rounded-lg px-4 py-3 font-semibold text-base",
-          result.correct
-            ? "bg-green-100 text-green-800 border border-green-200"
-            : "bg-red-100 text-red-800 border border-red-200",
-        ].join(" ")}
+        style={{
+          padding: "10px 14px",
+          background: result.correct ? "var(--color-correct-soft)" : "var(--color-wrong-soft)",
+          border: `1px solid ${result.correct ? "var(--color-correct)" : "var(--color-wrong)"}`,
+          color: result.correct ? "var(--color-correct)" : "var(--color-wrong)",
+          borderRadius: 6,
+          fontFamily: "var(--font-sans)",
+          fontWeight: 500,
+          fontSize: 14,
+        }}
       >
-        {result.correct ? "Correct!" : "Incorrect"}
+        {result.correct ? "Correct!" : "Not quite."}
       </div>
 
       {/* Correct answer */}
-      <div className="text-sm text-slate-700">
-        <span className="text-slate-500">Correct answer: </span>
-        <span className="font-bold">{result.correct_answer}</span>
+      <div style={{ fontFamily: "var(--font-sans)", fontSize: 13, color: "var(--color-ink-soft)" }}>
+        Correct answer:{" "}
+        <span style={{ color: "var(--color-ink)", fontWeight: 600 }}>{result.correct_answer}</span>
       </div>
 
       {/* Score delta */}
-      {result.score_delta > 0 && (
-        <div className="text-sm font-semibold text-green-700">
-          +{result.score_delta} points
-        </div>
-      )}
-      {result.score_delta === 0 && (
-        <div className="text-sm text-slate-500">0 points</div>
-      )}
+      <div
+        style={{
+          fontFamily: "var(--font-mono)",
+          fontSize: 11,
+          color: "var(--color-accent)",
+          fontWeight: 500,
+        }}
+      >
+        {result.score_delta > 0 ? "+" : ""}
+        {result.score_delta} pts
+      </div>
 
       {/* Explanation */}
-      <div className="text-sm text-slate-700 leading-relaxed whitespace-pre-wrap bg-slate-50 rounded-lg p-3 border border-slate-100">
+      <div
+        style={{
+          padding: 14,
+          background: "var(--color-surface-2)",
+          borderRadius: 6,
+          fontFamily: "var(--font-sans)",
+          fontSize: 13,
+          lineHeight: 1.55,
+          color: "var(--color-ink-soft)",
+          border: "1px solid var(--color-border-soft)",
+          whiteSpace: "pre-wrap",
+        }}
+      >
         {result.explanation}
       </div>
 
-      {/* Next question button */}
-      <button
-        onClick={onNext}
-        className="w-full px-6 py-3 bg-slate-800 text-white font-semibold rounded-lg hover:bg-slate-700 active:bg-slate-900 transition-colors"
-      >
-        Next Question
-      </button>
+      <PrimaryButton onClick={onNext}>Next question →</PrimaryButton>
     </div>
   );
 }

@@ -1,4 +1,5 @@
 import { useLocation, useNavigate } from "react-router-dom";
+import PrimaryButton from "../components/ui/PrimaryButton";
 
 interface ResultsState {
   score: number;
@@ -17,61 +18,179 @@ export default function Results() {
   }
 
   const { score, answered, correct } = state;
-  const accuracy =
-    answered > 0 ? Math.round((correct / answered) * 100) : 0;
+  const accuracy = answered > 0 ? Math.round((correct / answered) * 100) : 0;
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center gap-8 p-8 bg-slate-50">
-      <div className="max-w-md w-full flex flex-col items-center gap-6 text-center">
-        <h1 className="text-4xl font-bold text-slate-800">Session Complete</h1>
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        justifyContent: "center",
+        gap: 32,
+        padding: 32,
+        background: "var(--color-bg)",
+      }}
+    >
+      <div
+        style={{
+          maxWidth: 440,
+          width: "100%",
+          display: "flex",
+          flexDirection: "column",
+          gap: 24,
+          textAlign: "center",
+        }}
+      >
+        <h1
+          style={{
+            fontFamily: "var(--font-sans)",
+            fontWeight: 600,
+            fontSize: 36,
+            color: "var(--color-ink)",
+            letterSpacing: "-0.02em",
+            margin: 0,
+          }}
+        >
+          Session{" "}
+          <em style={{ fontStyle: "italic", color: "var(--color-accent)" }}>Complete</em>
+        </h1>
 
-        <div className="w-full bg-white rounded-xl border border-slate-200 p-6 flex flex-col gap-4">
-          <div className="flex flex-col gap-1">
-            <span className="text-5xl font-bold text-slate-800">{score}</span>
-            <span className="text-slate-500 text-sm">Final Score</span>
+        <div
+          style={{
+            background: "var(--color-surface)",
+            border: "1px solid var(--color-border)",
+            borderRadius: 10,
+            padding: 24,
+            display: "flex",
+            flexDirection: "column",
+            gap: 20,
+          }}
+        >
+          <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+            <span
+              style={{
+                fontFamily: "var(--font-sans)",
+                fontWeight: 600,
+                fontSize: 56,
+                color: "var(--color-ink)",
+                letterSpacing: "-0.02em",
+                lineHeight: 1,
+              }}
+            >
+              {score}
+            </span>
+            <span
+              style={{
+                fontFamily: "var(--font-mono)",
+                fontSize: 10,
+                color: "var(--color-ink-soft)",
+                textTransform: "uppercase",
+                letterSpacing: "0.08em",
+              }}
+            >
+              Final Score
+            </span>
           </div>
 
-          <div className="grid grid-cols-2 gap-4 pt-4 border-t border-slate-100">
-            <div className="flex flex-col gap-1">
-              <span className="text-2xl font-semibold text-slate-700">
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: 16,
+              paddingTop: 16,
+              borderTop: "1px solid var(--color-border-soft)",
+            }}
+          >
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              <span
+                style={{
+                  fontFamily: "var(--font-sans)",
+                  fontWeight: 600,
+                  fontSize: 28,
+                  color: "var(--color-ink)",
+                  letterSpacing: "-0.01em",
+                }}
+              >
                 {answered}
               </span>
-              <span className="text-slate-500 text-xs">Questions Answered</span>
+              <span
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: 10,
+                  color: "var(--color-ink-soft)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                }}
+              >
+                Answered
+              </span>
             </div>
-            <div className="flex flex-col gap-1">
-              <span className="text-2xl font-semibold text-slate-700">
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              <span
+                style={{
+                  fontFamily: "var(--font-sans)",
+                  fontWeight: 600,
+                  fontSize: 28,
+                  color: "var(--color-ink)",
+                  letterSpacing: "-0.01em",
+                }}
+              >
                 {correct}
               </span>
-              <span className="text-slate-500 text-xs">Correct</span>
+              <span
+                style={{
+                  fontFamily: "var(--font-mono)",
+                  fontSize: 10,
+                  color: "var(--color-ink-soft)",
+                  textTransform: "uppercase",
+                  letterSpacing: "0.08em",
+                }}
+              >
+                Correct
+              </span>
             </div>
           </div>
 
-          <div className="pt-2">
-            <span className="text-slate-600 text-sm">
-              Accuracy:{" "}
-              <span className="font-semibold text-slate-800">{accuracy}%</span>
-            </span>
+          <div
+            style={{
+              fontFamily: "var(--font-sans)",
+              fontSize: 13,
+              color: "var(--color-ink-soft)",
+              paddingTop: 4,
+            }}
+          >
+            Accuracy:{" "}
+            <span style={{ color: "var(--color-ink)", fontWeight: 600 }}>{accuracy}%</span>
           </div>
         </div>
 
-        <p className="text-slate-600 text-sm">
-          You answered {answered} question{answered !== 1 ? "s" : ""},{" "}
-          {correct} correct. Final score: {score}.
+        <p
+          style={{
+            fontFamily: "var(--font-sans)",
+            fontSize: 13,
+            color: "var(--color-ink-soft)",
+            margin: 0,
+          }}
+        >
+          You answered {answered} question{answered !== 1 ? "s" : ""}, {correct} correct.
         </p>
 
-        <div className="flex gap-3 w-full">
-          <button
+        <div style={{ display: "flex", gap: 12, width: "100%" }}>
+          <PrimaryButton
             onClick={() => navigate("/quiz")}
-            className="flex-1 px-6 py-3 bg-slate-800 text-white font-semibold rounded-lg hover:bg-slate-700 active:bg-slate-900 transition-colors"
+            style={{ flex: 1 }}
           >
             Play Again
-          </button>
-          <button
+          </PrimaryButton>
+          <PrimaryButton
+            variant="ghost"
             onClick={() => navigate("/")}
-            className="flex-1 px-6 py-3 bg-white text-slate-700 font-semibold rounded-lg border border-slate-200 hover:bg-slate-50 active:bg-slate-100 transition-colors"
+            style={{ flex: 1 }}
           >
             Home
-          </button>
+          </PrimaryButton>
         </div>
       </div>
     </div>

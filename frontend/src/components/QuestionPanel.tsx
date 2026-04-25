@@ -17,8 +17,20 @@ export default function QuestionPanel({
   disabled,
 }: Props) {
   return (
-    <div className="flex flex-col gap-4">
-      <h2 className="text-lg font-semibold text-slate-800">{question.prompt}</h2>
+    <div style={{ display: "flex", flexDirection: "column", gap: 14 }}>
+      <h2
+        style={{
+          fontFamily: "var(--font-sans)",
+          fontWeight: 600,
+          fontSize: 22,
+          color: "var(--color-ink)",
+          letterSpacing: "-0.01em",
+          lineHeight: 1.15,
+          margin: 0,
+        }}
+      >
+        {question.prompt}
+      </h2>
 
       {question.mode === "multiple_choice" && (
         <MultipleChoiceUI

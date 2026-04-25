@@ -9,14 +9,20 @@ export default function HintOverlay({ used, onRequest, disabled }: Props) {
     <button
       onClick={onRequest}
       disabled={used || disabled}
-      className={[
-        "px-4 py-2 text-sm font-medium rounded-lg border transition-colors",
-        used || disabled
-          ? "border-slate-200 text-slate-400 bg-slate-50 cursor-not-allowed"
-          : "border-amber-300 text-amber-700 bg-amber-50 hover:bg-amber-100 active:bg-amber-200",
-      ].join(" ")}
+      style={{
+        background: "transparent",
+        border: "none",
+        padding: "4px 0",
+        fontFamily: "var(--font-sans)",
+        fontSize: 13,
+        color: used ? "var(--color-ink-soft)" : "var(--color-accent)",
+        textDecoration: "underline",
+        textUnderlineOffset: 3,
+        cursor: used || disabled ? "default" : "pointer",
+        opacity: used ? 0.5 : 1,
+      }}
     >
-      {used ? "Hint used" : "Use hint (-5 pts)"}
+      {used ? "Hint shown" : "Use a hint (−5)"}
     </button>
   );
 }
