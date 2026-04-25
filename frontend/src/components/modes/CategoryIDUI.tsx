@@ -1,6 +1,7 @@
 import { useState } from "react";
 import type { CategoryIDPayload } from "../../lib/types";
 import AnswerChoice from "../ui/AnswerChoice";
+import PrimaryButton from "../ui/PrimaryButton";
 
 interface Props {
   payload: CategoryIDPayload;
@@ -16,22 +17,31 @@ export default function CategoryIDUI({ payload, onSubmit, disabled }: Props) {
   const [selected, setSelected] = useState<string | null>(null);
 
   function handleSelect(category: string) {
-    if (disabled || selected !== null) return;
+    if (disabled) return;
     setSelected(category);
-    onSubmit(category);
+  }
+
+  function handleSubmit() {
+    if (!selected || disabled) return;
+    onSubmit(selected);
   }
 
   return (
-    <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8 }}>
-      {payload.categories.map((cat) => (
-        <AnswerChoice
-          key={cat}
-          label={capitalize(cat)}
-          selected={selected === cat}
-          onClick={() => handleSelect(cat)}
-          disabled={disabled || selected !== null}
-        />
-      ))}
+    <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+      <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: 8 }}>
+        {payload.categories.map((cat) => (
+          <AnswerChoice
+            key={cat}
+            label={capitalize(cat)}
+            selected={selected === cat}
+            onClick={() => handleSelect(cat)}
+            disabled={disabled}
+          />
+        ))}
+      </div>
+      <PrimaryButton onClick={handleSubmit} disabled={!selected || disabled}>
+        Submit Answer
+      </PrimaryButton>
     </div>
   );
 }
