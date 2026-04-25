@@ -42,6 +42,26 @@ interface HintLine {
 
 const DEFAULT_GAPS: [number, number][] = [[1350, 1450], [1800, 1950]];
 
+const ZOOM_FACTOR = 0.85;
+const MIN_X_RANGE = 20;
+const MIN_Y_RANGE = 0.01;
+const Y_DATA_MIN = 0;
+const Y_DATA_MAX = 1;
+const DRAG_THRESHOLD_PX = 4;
+
+function clamp(v: number, lo: number, hi: number): number {
+  return Math.max(lo, Math.min(hi, v));
+}
+
+function clampPan(min: number, max: number, lo: number, hi: number): [number, number] {
+  const range = max - min;
+  const fullRange = hi - lo;
+  if (range >= fullRange) return [lo, hi];
+  if (min < lo) return [lo, lo + range];
+  if (max > hi) return [hi - range, hi];
+  return [min, max];
+}
+
 const REGIONS: [number, number, string][] = [
   [380, 1000, "VNIR"],
   [1000, 1800, "SWIR-1"],
@@ -77,7 +97,6 @@ export default function SpectrumChart({
 }: SpectrumChartProps) {
   const containerRef = useRef<HTMLDivElement>(null);
   const chartRef = useRef<HTMLDivElement>(null);
-  const svgRef = useRef<SVGSVGElement>(null);
   const uplotRef = useRef<uPlot | null>(null);
 
   const [cursor, setCursor] = useState<CursorReadout | null>(null);
@@ -93,17 +112,19 @@ export default function SpectrumChart({
     plotHeight: 0,
   });
 
-  const plotBboxRef = useRef(plotBbox);
   const atmosphericGapsRef = useRef(atmosphericGaps);
   const diagnosticFeaturesRef = useRef(diagnosticFeatures);
   const selectedWavelengthRef = useRef(selectedWavelength);
+  const modeRef = useRef(mode);
+  const onFeatureClickRef = useRef(onFeatureClick);
 
   // Keep refs in sync with latest prop values so stable callbacks don't go stale
   useEffect(() => {
-    plotBboxRef.current = plotBbox;
     atmosphericGapsRef.current = atmosphericGaps;
     diagnosticFeaturesRef.current = diagnosticFeatures;
     selectedWavelengthRef.current = selectedWavelength;
+    modeRef.current = mode;
+    onFeatureClickRef.current = onFeatureClick;
   });
 
   const xMin = wavelengths[0] ?? 380;
@@ -180,7 +201,10 @@ export default function SpectrumChart({
   function handleResetZoom() {
     const u = uplotRef.current;
     if (!u) return;
-    u.setScale("x", { min: xMin, max: xMax });
+    u.batch(() => {
+      u.setScale("x", { min: xMin, max: xMax });
+      u.setScale("y", { min: Y_DATA_MIN, max: Y_DATA_MAX });
+    });
   }
 
   // Mount uPlot once
@@ -194,7 +218,7 @@ export default function SpectrumChart({
       height: chartRef.current.clientHeight || 400,
       legend: { show: false },
       cursor: {
-        drag: { x: true, y: false },
+        drag: { x: false, y: false },
       },
       series: [
         { label: "λ (nm)" },
@@ -220,7 +244,7 @@ export default function SpectrumChart({
           stroke: TOKEN.inkSoft,
           font: `12px ${TOKEN.font}`,
           labelFont: `500 13px ${TOKEN.font}`,
-          label: continuumRemoved ? "Continuum-removed reflectance" : "Reflectance (0–1)",
+          label: continuumRemoved ? "Continuum-removed reflectance" : "Surface Reflectance",
           labelSize: 22,
           size: 72,
           grid: { stroke: TOKEN.gridLine, width: 1, dash: [2, 3] },
@@ -229,7 +253,7 @@ export default function SpectrumChart({
       ],
       scales: {
         x: { time: false, min: xMin, max: xMax },
-        y: { min: 0, max: 1.1 },
+        y: { min: Y_DATA_MIN, max: Y_DATA_MAX },
       },
       hooks: {
         setCursor: [
@@ -261,7 +285,128 @@ export default function SpectrumChart({
       resetZoomRef.current = handleResetZoom;
     }
 
+    const over = u.over;
+    over.style.touchAction = "none";
+    over.style.cursor = modeRef.current === "feature_spotting" ? "crosshair" : "grab";
+
+    const handleWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      const rect = over.getBoundingClientRect();
+      const cx = e.clientX - rect.left;
+      const cy = e.clientY - rect.top;
+
+      const xVal = u.posToVal(cx, "x");
+      const yVal = u.posToVal(cy, "y");
+
+      const oxMin = u.scales.x.min!;
+      const oxMax = u.scales.x.max!;
+      const oyMin = u.scales.y.min!;
+      const oyMax = u.scales.y.max!;
+
+      const factor = e.deltaY < 0 ? ZOOM_FACTOR : 1 / ZOOM_FACTOR;
+
+      const newXRange = clamp((oxMax - oxMin) * factor, MIN_X_RANGE, xMax - xMin);
+      const xLeftFrac = (xVal - oxMin) / (oxMax - oxMin);
+      let nxMin = xVal - xLeftFrac * newXRange;
+      let nxMax = nxMin + newXRange;
+      [nxMin, nxMax] = clampPan(nxMin, nxMax, xMin, xMax);
+
+      const newYRange = clamp((oyMax - oyMin) * factor, MIN_Y_RANGE, Y_DATA_MAX - Y_DATA_MIN);
+      const yTopFrac = (oyMax - yVal) / (oyMax - oyMin);
+      let nyMax = yVal + yTopFrac * newYRange;
+      let nyMin = nyMax - newYRange;
+      [nyMin, nyMax] = clampPan(nyMin, nyMax, Y_DATA_MIN, Y_DATA_MAX);
+
+      u.batch(() => {
+        u.setScale("x", { min: nxMin, max: nxMax });
+        u.setScale("y", { min: nyMin, max: nyMax });
+      });
+    };
+
+    let dragStart:
+      | { x: number; y: number; xMin: number; xMax: number; yMin: number; yMax: number }
+      | null = null;
+    let dragMoved = 0;
+
+    const handlePointerDown = (e: PointerEvent) => {
+      if (e.button !== 0) return;
+      dragStart = {
+        x: e.clientX,
+        y: e.clientY,
+        xMin: u.scales.x.min!,
+        xMax: u.scales.x.max!,
+        yMin: u.scales.y.min!,
+        yMax: u.scales.y.max!,
+      };
+      dragMoved = 0;
+      over.setPointerCapture(e.pointerId);
+      if (modeRef.current !== "feature_spotting") {
+        over.style.cursor = "grabbing";
+      }
+    };
+
+    const handlePointerMove = (e: PointerEvent) => {
+      if (!dragStart) return;
+      const dx = e.clientX - dragStart.x;
+      const dy = e.clientY - dragStart.y;
+      dragMoved = Math.max(dragMoved, Math.hypot(dx, dy));
+      if (dragMoved < DRAG_THRESHOLD_PX) return;
+
+      if (modeRef.current !== "feature_spotting") {
+        over.style.cursor = "grabbing";
+      }
+
+      const rect = over.getBoundingClientRect();
+      const xRange = dragStart.xMax - dragStart.xMin;
+      const yRange = dragStart.yMax - dragStart.yMin;
+      const dxData = (dx / rect.width) * xRange;
+      const dyData = (dy / rect.height) * yRange;
+
+      let nxMin = dragStart.xMin - dxData;
+      let nxMax = dragStart.xMax - dxData;
+      let nyMin = dragStart.yMin + dyData;
+      let nyMax = dragStart.yMax + dyData;
+      [nxMin, nxMax] = clampPan(nxMin, nxMax, xMin, xMax);
+      [nyMin, nyMax] = clampPan(nyMin, nyMax, Y_DATA_MIN, Y_DATA_MAX);
+
+      u.batch(() => {
+        u.setScale("x", { min: nxMin, max: nxMax });
+        u.setScale("y", { min: nyMin, max: nyMax });
+      });
+    };
+
+    const handlePointerUp = (e: PointerEvent) => {
+      if (!dragStart) return;
+      const wasClick = dragMoved < DRAG_THRESHOLD_PX;
+      const startX = dragStart.x;
+      dragStart = null;
+      if (over.hasPointerCapture(e.pointerId)) {
+        over.releasePointerCapture(e.pointerId);
+      }
+      over.style.cursor = modeRef.current === "feature_spotting" ? "crosshair" : "grab";
+
+      if (wasClick && modeRef.current === "feature_spotting" && onFeatureClickRef.current) {
+        const rect = over.getBoundingClientRect();
+        const px = startX - rect.left;
+        const wavelength = u.posToVal(px, "x");
+        if (wavelength >= xMin && wavelength <= xMax) {
+          onFeatureClickRef.current(Math.round(wavelength * 10) / 10);
+        }
+      }
+    };
+
+    over.addEventListener("wheel", handleWheel, { passive: false });
+    over.addEventListener("pointerdown", handlePointerDown);
+    over.addEventListener("pointermove", handlePointerMove);
+    over.addEventListener("pointerup", handlePointerUp);
+    over.addEventListener("pointercancel", handlePointerUp);
+
     return () => {
+      over.removeEventListener("wheel", handleWheel);
+      over.removeEventListener("pointerdown", handlePointerDown);
+      over.removeEventListener("pointermove", handlePointerMove);
+      over.removeEventListener("pointerup", handlePointerUp);
+      over.removeEventListener("pointercancel", handlePointerUp);
       u.destroy();
       uplotRef.current = null;
       if (resetZoomRef) resetZoomRef.current = null;
@@ -277,7 +422,7 @@ export default function SpectrumChart({
     if (u.axes[1]) {
       u.axes[1].label = continuumRemoved
         ? "Continuum-removed reflectance"
-        : "Reflectance (0–1)";
+        : "Surface Reflectance";
     }
     u.setData([wavelengths, activeData] as uPlot.AlignedData);
     recomputeOverlay();
@@ -287,6 +432,13 @@ export default function SpectrumChart({
   useEffect(() => {
     recomputeOverlay();
   }, [selectedWavelength, diagnosticFeatures, recomputeOverlay]);
+
+  // Sync cursor style when mode changes (chart only initializes once)
+  useEffect(() => {
+    const u = uplotRef.current;
+    if (!u) return;
+    u.over.style.cursor = mode === "feature_spotting" ? "crosshair" : "grab";
+  }, [mode]);
 
   // ResizeObserver
   useEffect(() => {
@@ -305,24 +457,7 @@ export default function SpectrumChart({
     return () => ro.disconnect();
   }, [recomputeOverlay]);
 
-  function handlePlotClick(e: React.MouseEvent<SVGRectElement>) {
-    if (mode !== "feature_spotting" || !onFeatureClick) return;
-    const u = uplotRef.current;
-    if (!u) return;
-
-    const svgEl = svgRef.current;
-    if (!svgEl) return;
-    const rect = svgEl.getBoundingClientRect();
-    const svgX = e.clientX - rect.left;
-    const { plotLeft } = plotBboxRef.current;
-    const plotX = svgX - plotLeft;
-    const wavelength = u.posToVal(plotX, "x");
-    if (wavelength >= xMin && wavelength <= xMax) {
-      onFeatureClick(Math.round(wavelength * 10) / 10);
-    }
-  }
-
-  const { plotLeft, plotTop, plotWidth, plotHeight } = plotBbox;
+  const { plotTop, plotHeight } = plotBbox;
 
   return (
     <div
@@ -334,25 +469,11 @@ export default function SpectrumChart({
 
       {/* SVG overlay */}
       <svg
-        ref={svgRef}
         className="absolute inset-0 pointer-events-none"
         width={svgSize.width}
         height={svgSize.height}
         style={{ width: svgSize.width, height: svgSize.height }}
       >
-        {/* Feature spotting click-catcher */}
-        {mode === "feature_spotting" && plotWidth > 0 && (
-          <rect
-            x={plotLeft}
-            y={plotTop}
-            width={plotWidth}
-            height={plotHeight}
-            fill="transparent"
-            style={{ pointerEvents: "auto", cursor: "crosshair" }}
-            onClick={handlePlotClick}
-          />
-        )}
-
         {/* Atmospheric gap shading */}
         {gapRects.map((gap, i) => (
           <g key={i}>
