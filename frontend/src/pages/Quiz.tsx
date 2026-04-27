@@ -44,6 +44,7 @@ export default function Quiz() {
   const [showHints, setShowHints] = useState(false);
   const [selectedWavelength, setSelectedWavelength] = useState<number | null>(null);
   const [continuumRemoved, setContinuumRemoved] = useState(false);
+  const [showAtmosphericGaps, setShowAtmosphericGaps] = useState(false);
 
   const [error, setError] = useState<string | null>(null);
 
@@ -272,6 +273,12 @@ export default function Quiz() {
                   Continuum-Removed
                 </button>
                 <button
+                  style={ctrlBtn(showAtmosphericGaps)}
+                  onClick={() => setShowAtmosphericGaps((v) => !v)}
+                >
+                  H₂O bands
+                </button>
+                <button
                   style={ctrlBtn(false)}
                   onClick={() => resetZoomRef.current?.()}
                 >
@@ -287,6 +294,7 @@ export default function Quiz() {
               diagnosticFeatures={currentSpectrum.diagnostic_features}
               showHints={showHints}
               continuumRemoved={continuumRemoved}
+              showAtmosphericGaps={showAtmosphericGaps}
               mode={currentQuestion.mode}
               selectedWavelength={selectedWavelength}
               onFeatureClick={setSelectedWavelength}

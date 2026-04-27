@@ -12,6 +12,7 @@ export interface SpectrumChartProps {
   continuumRemoved?: boolean;
   mode?: QuizMode;
   atmosphericGaps?: [number, number][];
+  showAtmosphericGaps?: boolean;
   selectedWavelength?: number | null;
   onFeatureClick?: (wavelength_nm: number) => void;
   resetZoomRef?: React.MutableRefObject<(() => void) | null>;
@@ -75,6 +76,7 @@ export default function SpectrumChart({
   continuumRemoved = false,
   mode,
   atmosphericGaps = DEFAULT_GAPS,
+  showAtmosphericGaps = false,
   selectedWavelength = null,
   onFeatureClick,
   resetZoomRef,
@@ -448,7 +450,7 @@ export default function SpectrumChart({
         style={{ width: svgSize.width, height: svgSize.height }}
       >
         {/* Atmospheric gap shading */}
-        {gapRects.map((gap, i) => (
+        {showAtmosphericGaps && gapRects.map((gap, i) => (
           <g key={i}>
             <rect
               x={gap.x}
