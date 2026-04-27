@@ -269,7 +269,7 @@ export default function Quiz() {
                   style={ctrlBtn(continuumRemoved)}
                   onClick={() => setContinuumRemoved(true)}
                 >
-                  Continuum
+                  Continuum-Removed
                 </button>
                 <button
                   style={ctrlBtn(false)}
