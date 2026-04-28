@@ -37,7 +37,7 @@ interface HintLine {
 
 const DEFAULT_GAPS: [number, number][] = [[1350, 1450], [1800, 1950]];
 
-const ZOOM_FACTOR = 0.85;
+const ZOOM_SENSITIVITY = 0.005;
 const MIN_X_RANGE = 20;
 const MIN_Y_RANGE = 0.01;
 const Y_DATA_MIN = 0;
@@ -173,15 +173,6 @@ export default function SpectrumChart({
     setPlotBbox({ plotLeft, plotTop, plotWidth, plotHeight });
   }, []);
 
-  function handleResetZoom() {
-    const u = uplotRef.current;
-    if (!u) return;
-    u.batch(() => {
-      u.setScale("x", { min: xMin, max: xMax });
-      u.setScale("y", { min: Y_DATA_MIN, max: Y_DATA_MAX });
-    });
-  }
-
   // Mount uPlot once
   useEffect(() => {
     if (!chartRef.current || wavelengths.length === 0) return;
@@ -256,13 +247,24 @@ export default function SpectrumChart({
     );
     uplotRef.current = u;
 
-    if (resetZoomRef) {
-      resetZoomRef.current = handleResetZoom;
-    }
-
     const over = u.over;
     over.style.touchAction = "none";
     over.style.cursor = modeRef.current === "feature_spotting" ? "crosshair" : "grab";
+
+    // Apply zoom directly to the visible scale. Trackpads emit ~120 Hz events
+    // with fine-grained deltaY, so per-event application is perceptually smooth
+    // and stays 1:1 with input. Mouse wheels emit larger but proportional
+    // deltaY, so each click becomes a single proportional step.
+    const handleResetZoom = () => {
+      u.batch(() => {
+        u.setScale("x", { min: xMin, max: xMax });
+        u.setScale("y", { min: Y_DATA_MIN, max: Y_DATA_MAX });
+      });
+    };
+
+    if (resetZoomRef) {
+      resetZoomRef.current = handleResetZoom;
+    }
 
     const handleWheel = (e: WheelEvent) => {
       e.preventDefault();
@@ -273,21 +275,21 @@ export default function SpectrumChart({
       const xVal = u.posToVal(cx, "x");
       const yVal = u.posToVal(cy, "y");
 
-      const oxMin = u.scales.x.min!;
-      const oxMax = u.scales.x.max!;
-      const oyMin = u.scales.y.min!;
-      const oyMax = u.scales.y.max!;
+      const vxMin = u.scales.x.min!;
+      const vxMax = u.scales.x.max!;
+      const vyMin = u.scales.y.min!;
+      const vyMax = u.scales.y.max!;
 
-      const factor = e.deltaY < 0 ? ZOOM_FACTOR : 1 / ZOOM_FACTOR;
+      const factor = Math.exp(e.deltaY * ZOOM_SENSITIVITY);
 
-      const newXRange = clamp((oxMax - oxMin) * factor, MIN_X_RANGE, xMax - xMin);
-      const xLeftFrac = (xVal - oxMin) / (oxMax - oxMin);
+      const newXRange = clamp((vxMax - vxMin) * factor, MIN_X_RANGE, xMax - xMin);
+      const xLeftFrac = (xVal - vxMin) / (vxMax - vxMin);
       let nxMin = xVal - xLeftFrac * newXRange;
       let nxMax = nxMin + newXRange;
       [nxMin, nxMax] = clampPan(nxMin, nxMax, xMin, xMax);
 
-      const newYRange = clamp((oyMax - oyMin) * factor, MIN_Y_RANGE, Y_DATA_MAX - Y_DATA_MIN);
-      const yTopFrac = (oyMax - yVal) / (oyMax - oyMin);
+      const newYRange = clamp((vyMax - vyMin) * factor, MIN_Y_RANGE, Y_DATA_MAX - Y_DATA_MIN);
+      const yTopFrac = (vyMax - yVal) / (vyMax - vyMin);
       let nyMax = yVal + yTopFrac * newYRange;
       let nyMin = nyMax - newYRange;
       [nyMin, nyMax] = clampPan(nyMin, nyMax, Y_DATA_MIN, Y_DATA_MAX);
