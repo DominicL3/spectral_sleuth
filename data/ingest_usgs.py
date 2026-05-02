@@ -52,12 +52,12 @@ MANIFEST = [
         "chapter": "ChapterM",
         "filename": "splib07b_Kaolinite_CM3_BECKa_AREF.txt",
         "diagnostic_features": [
-            {"wavelength_nm": 1400, "description": "Al-OH overtone doublet (~1395/1415 nm)"},
-            {"wavelength_nm": 2160, "description": "Al-OH combination band"},
-            {"wavelength_nm": 2200, "description": "Strong Al-OH absorption, diagnostic doublet (~2160/2200 nm)"},
+            {"wavelength_nm": 1414, "description": "Al-OH first overtone doublet (~1395/1414 nm)"},
+            {"wavelength_nm": 2165, "description": "Al-OH combination band, first member of the diagnostic doublet"},
+            {"wavelength_nm": 2206, "description": "Al-OH combination band, second (deeper) member of the diagnostic doublet"},
         ],
         "explanation": (
-            "Kaolinite is a 1:1 layer clay mineral with a sharp Al-OH doublet near 2160 and 2200 nm "
+            "Kaolinite is a 1:1 layer clay mineral with a sharp Al-OH doublet near 2165 and 2206 nm "
             "that is highly diagnostic. It is a common weathering product of feldspars and is "
             "widely used as an indicator of hydrothermal alteration in argillic zones."
         ),
@@ -73,16 +73,17 @@ MANIFEST = [
         "chapter": "ChapterM",
         "filename": "splib07b_Muscovite_HS146.1B_ASDFRa_AREF.txt",
         "diagnostic_features": [
-            {"wavelength_nm": 1400, "description": "OH overtone"},
-            {"wavelength_nm": 2200, "description": "Al-OH absorption (~2195 nm)"},
-            {"wavelength_nm": 2350, "description": "Mg-OH / Si-O combination band"},
+            {"wavelength_nm": 1410, "description": "Al-OH first overtone"},
+            {"wavelength_nm": 2208, "description": "Al-OH combination band (~2200-2210 nm; position shifts slightly with Al content)"},
+            {"wavelength_nm": 2350, "description": "Al-OH / Si-OH combination band"},
         ],
         "explanation": (
-            "Muscovite is a potassic white mica with a strong Al-OH absorption near 2200 nm. "
-            "Its position (2195 vs 2205 nm for phengite) is used to map Al-content in mica and "
-            "distinguish phyllic from advanced argillic alteration zones."
+            "Muscovite is a potassic white mica with a strong Al-OH absorption near 2200-2210 nm. "
+            "The exact band position shifts with Tschermak substitution (more Al -> shorter wavelength "
+            "near 2195 nm; more Si/Mg as in phengite -> longer wavelength near 2215 nm), and is used "
+            "to map mica composition and distinguish phyllic from advanced argillic alteration zones."
         ),
-        "aliases": ["white mica", "phengite"],
+        "aliases": ["white mica", "potassic mica", "K-mica"],
         "tags": ["mica", "alteration", "SWIR", "phyllosilicate"],
     },
     {
@@ -137,14 +138,14 @@ MANIFEST = [
         "chapter": "ChapterM",
         "filename": "splib07b_Calcite_HS48.3B_BECKa_AREF.txt",
         "diagnostic_features": [
-            {"wavelength_nm": 2160, "description": "CO3 overtone"},
-            {"wavelength_nm": 2335, "description": "Strong CO3 combination band (diagnostic)"},
-            {"wavelength_nm": 2530, "description": "CO3 combination (beyond 2500 nm)"},
+            {"wavelength_nm": 2160, "description": "CO3 secondary combination band (weak)"},
+            {"wavelength_nm": 2335, "description": "CO3 main combination band (~2335-2340 nm) - diagnostic of carbonate, distinguishes calcite from dolomite"},
         ],
         "explanation": (
-            "Calcite (CaCO₃) has a strong carbonate absorption triplet near 2160, 2335 nm "
-            "that is highly diagnostic. The exact position of the 2335 nm feature (~2340 nm for "
-            "calcite vs ~2320 nm for dolomite) allows discrimination between the two carbonates."
+            "Calcite (CaCO₃) has a strong CO₃ combination band near 2335 nm with a weaker secondary "
+            "feature near 2160 nm. The exact position of the main band (~2335-2340 nm for calcite "
+            "vs ~2320 nm for dolomite) is the classic SWIR discriminator between the two carbonates. "
+            "Additional CO₃ features lie just beyond 2500 nm and are not visible in this 380-2500 nm spectrum."
         ),
         "aliases": ["limestone", "chalk", "marble"],
         "tags": ["carbonate", "SWIR", "CO3"],
@@ -158,13 +159,13 @@ MANIFEST = [
         "chapter": "ChapterM",
         "filename": "splib07b_Dolomite_COD2005_BECKb_AREF.txt",
         "diagnostic_features": [
-            {"wavelength_nm": 2160, "description": "CO3 overtone"},
-            {"wavelength_nm": 2320, "description": "Strong CO3 combination band (~10 nm shift from calcite)"},
+            {"wavelength_nm": 2320, "description": "Strong CO3 combination band (~10 nm shift toward shorter wavelength from calcite's ~2335 nm)"},
         ],
         "explanation": (
             "Dolomite (CaMg(CO₃)₂) is spectrally similar to calcite but with its main CO₃ feature "
-            "shifted to ~2320 nm (vs ~2340 nm for calcite). This ~10–20 nm shift is a classic SWIR "
-            "discrimination problem used in carbonate mapping from airborne sensors."
+            "shifted to ~2320 nm (vs ~2335 nm for calcite). This ~10–20 nm shift is the classic SWIR "
+            "discrimination problem used in carbonate mapping from airborne sensors. The secondary CO₃ "
+            "overtone near 2160 nm is too shallow to be a reliable marker in this sample."
         ),
         "aliases": ["dolostone"],
         "tags": ["carbonate", "SWIR", "CO3", "Mg"],
@@ -179,13 +180,14 @@ MANIFEST = [
         "chapter": "ChapterM",
         "filename": "splib07b_Hematite_GDS27_BECKa_AREF.txt",
         "diagnostic_features": [
-            {"wavelength_nm": 550, "description": "Charge transfer band edge (visible red color)"},
-            {"wavelength_nm": 860, "description": "Fe3+ crystal field absorption"},
+            {"wavelength_nm": 530, "description": "Fe3+ charge transfer / 4T1 band edge (gives the visible red color)"},
+            {"wavelength_nm": 870, "description": "Fe3+ 6A1 -> 4T1 crystal field absorption (~860-880 nm)"},
         ],
         "explanation": (
-            "Hematite (α-Fe₂O₃) is the most stable iron oxide and gives red soils and rocks their "
-            "color. Its broad Fe³⁺ absorptions in the visible dominate its spectrum. It is commonly "
-            "mapped on Mars and in tropical laterites, acid mine drainage, and gossan zones."
+            "Hematite (α-Fe₂O₃) is the most stable iron oxide and gives red soils and rocks their color. "
+            "Its broad Fe³⁺ charge-transfer absorption in the visible and a sharper crystal-field band "
+            "near 870 nm dominate the spectrum. It is commonly mapped on Mars and in tropical laterites, "
+            "acid mine drainage, and gossan zones."
         ),
         "aliases": ["red iron oxide", "Fe2O3"],
         "tags": ["iron oxide", "visible", "Fe3+", "Mars", "gossans"],
@@ -199,16 +201,17 @@ MANIFEST = [
         "chapter": "ChapterM",
         "filename": "splib07b_Goethite_WS222_Coarse_Gr._BECKa_AREF.txt",
         "diagnostic_features": [
-            {"wavelength_nm": 480, "description": "Charge transfer absorption"},
-            {"wavelength_nm": 670, "description": "Fe3+ crystal field band"},
-            {"wavelength_nm": 900, "description": "Fe3+ crystal field band (broader than hematite)"},
+            {"wavelength_nm": 480, "description": "Fe3+ charge transfer absorption"},
+            {"wavelength_nm": 680, "description": "Fe3+ 6A1 -> 4T2 crystal-field band (broader and weaker than hematite)"},
+            {"wavelength_nm": 920, "description": "Fe3+ 6A1 -> 4T1 crystal-field band (~915-925 nm; longer wavelength than hematite's ~870 nm)"},
         ],
         "explanation": (
-            "Goethite (α-FeOOH) is the most common iron oxyhydroxide in weathered profiles, giving "
-            "soils a yellow-brown color. Its spectrum differs from hematite with a broader, longer "
-            "wavelength visible absorption, making the two distinguishable with hyperspectral data."
+            "Goethite (α-FeOOH) is the most common iron oxyhydroxide in weathered profiles, giving soils "
+            "a yellow-brown color. Its main Fe³⁺ band sits at a longer wavelength (~920 nm) than hematite's "
+            "(~870 nm), and its visible absorption complex is broader. Together these differences make "
+            "hematite and goethite distinguishable with hyperspectral data."
         ),
-        "aliases": ["limonite", "yellow iron oxide", "FeOOH"],
+        "aliases": ["yellow iron oxide", "FeOOH", "limonite (field term)"],
         "tags": ["iron oxide", "visible", "Fe3+", "weathering", "oxyhydroxide"],
     },
     {
@@ -221,7 +224,7 @@ MANIFEST = [
         "filename": "splib07b_Jarosite_GDS98_K_90C_Syn_BECKa_AREF.txt",
         "diagnostic_features": [
             {"wavelength_nm": 435, "description": "Fe3+ charge transfer"},
-            {"wavelength_nm": 930, "description": "Fe3+ crystal field"},
+            {"wavelength_nm": 895, "description": "Fe3+ crystal-field band (~890-900 nm)"},
             {"wavelength_nm": 2270, "description": "S-OH + Fe-OH combination"},
         ],
         "explanation": (
@@ -242,14 +245,15 @@ MANIFEST = [
         "chapter": "ChapterM",
         "filename": "splib07b_Gypsum_HS333.1B_(Selenite)_ASDFRa_AREF.txt",
         "diagnostic_features": [
-            {"wavelength_nm": 1460, "description": "H2O combination band"},
-            {"wavelength_nm": 1750, "description": "H2O combination overtone (diagnostic)"},
-            {"wavelength_nm": 1945, "description": "H2O combination band"},
+            {"wavelength_nm": 1447, "description": "Strongest member of the H2O combination triplet (1447, 1490, 1535 nm) - diagnostic of structural water"},
+            {"wavelength_nm": 1750, "description": "H2O combination overtone (diagnostic gypsum doublet near 1750 nm)"},
+            {"wavelength_nm": 1945, "description": "H2O combination band (slightly offset from typical free water at 1940 nm)"},
         ],
         "explanation": (
-            "Gypsum (CaSO₄·2H₂O) has distinct water absorption features at 1460, 1750, and 1945 nm "
-            "from its structural H₂O. The 1750 nm feature is particularly diagnostic and distinguishes "
-            "gypsum from anhydrous sulfates. It is common in evaporite sequences and found on Mars."
+            "Gypsum (CaSO₄·2H₂O) has a distinct H₂O combination triplet at 1447, 1490, and 1535 nm "
+            "from its structural water, plus features near 1750 and 1945 nm. The 1447 nm triplet and "
+            "1750 nm doublet together are highly diagnostic and distinguish gypsum from anhydrous "
+            "sulfates. It is common in evaporite sequences and has been mapped on Mars."
         ),
         "aliases": ["selenite", "alabaster", "calcium sulfate dihydrate"],
         "tags": ["sulfate", "evaporite", "H2O", "SWIR", "Mars"],
@@ -316,23 +320,24 @@ MANIFEST = [
     {
         "id": "acmite_nmnh133746",
         "name": "Acmite NMNH133746 (Pyroxene)",
-        "display_name": "Pyroxene (Acmite)",
+        "display_name": "Acmite / Aegirine (Fe3+ pyroxene)",
         "category": "mineral",
         "subcategory": "silicate",
         "chapter": "ChapterM",
         "filename": "splib07b_Acmite_NMNH133746_Pyroxene_BECKa_AREF.txt",
         "diagnostic_features": [
-            {"wavelength_nm": 1000, "description": "Fe2+ M1 crystal field absorption (~1 µm)"},
-            {"wavelength_nm": 2000, "description": "Fe2+ M2 crystal field absorption (~2 µm)"},
+            {"wavelength_nm": 560, "description": "Visible Fe3+ charge-transfer absorption complex (subtle continuum drop into the green-blue)"},
+            {"wavelength_nm": 1073, "description": "Weak Fe3+ / minor Fe2+ crystal-field absorption (much weaker than the classic 1 µm band of Fe2+ pyroxenes)"},
         ],
         "explanation": (
-            "Pyroxenes are single-chain silicates with two characteristic Fe²⁺ absorptions near "
-            "1000 nm (M1 site) and 2000 nm (M2 site). These '1 and 2 µm bands' are the textbook "
-            "example of crystal field absorptions and are used to map pyroxene-bearing basalts and "
-            "ultramafic rocks in planetary and terrestrial remote sensing."
+            "Acmite (also called aegirine, NaFe³⁺Si₂O₆) is a sodic clinopyroxene whose iron is dominantly "
+            "Fe³⁺. Unlike the more common Fe²⁺ pyroxenes (orthopyroxene, augite, diopside) - which show the "
+            "textbook ~1 µm and ~2 µm crystal-field bands used in planetary mapping - acmite has very low "
+            "overall reflectance and only weak crystal-field features. Its spectrum is instead dominated by "
+            "Fe³⁺ charge-transfer absorptions in the visible."
         ),
-        "aliases": ["aegirine", "acmite", "clinopyroxene"],
-        "tags": ["silicate", "mafic", "Fe2+", "pyroxene", "1-micron", "2-micron", "planetary"],
+        "aliases": ["aegirine", "sodium iron pyroxene", "NaFe3+Si2O6"],
+        "tags": ["silicate", "mafic", "Fe3+", "pyroxene", "planetary"],
     },
     # ── Vegetation ─────────────────────────────────────────────────────────
     {
@@ -371,13 +376,15 @@ MANIFEST = [
         "diagnostic_features": [
             {"wavelength_nm": 680, "description": "Chlorophyll-a absorption"},
             {"wavelength_nm": 720, "description": "Red edge"},
-            {"wavelength_nm": 1730, "description": "Cellulose/lignin absorption"},
-            {"wavelength_nm": 2100, "description": "Cellulose + starch combination"},
+            {"wavelength_nm": 980, "description": "Liquid water absorption"},
+            {"wavelength_nm": 1730, "description": "C-H stretch first overtone (cellulose / lignin / wax)"},
+            {"wavelength_nm": 2100, "description": "Lignocellulose combination band (cellulose, hemicellulose, lignin)"},
         ],
         "explanation": (
-            "Conifer needles have a similar overall shape to broadleaf vegetation but with lower NIR "
-            "reflectance due to needle geometry and wax coatings. Dry matter absorption features from "
-            "cellulose and lignin near 1730 and 2100 nm are more pronounced in conifers."
+            "Conifer needles share the overall green-leaf shape with broadleaf vegetation but have lower "
+            "NIR reflectance because of needle geometry, internal shadowing, and waxy cuticles. Dry-matter "
+            "absorption features from cellulose, lignin and waxes near 1730 and 2100 nm are typically more "
+            "prominent than in broadleaves."
         ),
         "aliases": ["spruce", "conifer", "evergreen"],
         "tags": ["vegetation", "conifer", "needles", "cellulose", "lignin"],
@@ -413,15 +420,14 @@ MANIFEST = [
         "chapter": "ChapterV",
         "filename": "splib07b_Cheatgrass_ANPC1_field_calib_ASDFRa_AREF.txt",
         "diagnostic_features": [
-            {"wavelength_nm": 680, "description": "Chlorophyll-a absorption"},
-            {"wavelength_nm": 720, "description": "Red edge"},
-            {"wavelength_nm": 970, "description": "Liquid water"},
+            {"wavelength_nm": 680, "description": "Chlorophyll-a absorption (subdued in this dry-season sample)"},
         ],
         "explanation": (
-            "Cheatgrass (Bromus tectorum) is an invasive annual grass that greens up early in spring "
-            "before native species. This green spectrum shows typical graminoid features with a "
-            "narrow-leaf chlorophyll signature. Its early-season spectral behavior is used in "
-            "invasive species mapping."
+            "Cheatgrass (Bromus tectorum) is an invasive annual grass that greens up earlier in spring "
+            "than most native vegetation. The spectrum shows only a subdued chlorophyll absorption near "
+            "680 nm; the red edge and leaf-water features are barely present in this drier sample. "
+            "Cheatgrass's value for invasive-species mapping comes from its early phenological greening "
+            "rather than from a uniquely shaped spectrum."
         ),
         "aliases": ["Bromus tectorum", "downy brome", "invasive grass"],
         "tags": ["vegetation", "grass", "invasive", "chlorophyll"],
@@ -457,14 +463,17 @@ MANIFEST = [
         "chapter": "ChapterV",
         "filename": "splib07b_Lichen_Acarospora-1_ASDFRb_AREF.txt",
         "diagnostic_features": [
-            {"wavelength_nm": 490, "description": "Lichen pigment absorption"},
-            {"wavelength_nm": 680, "description": "Chlorophyll absorption (weak)"},
+            {"wavelength_nm": 680, "description": "Chlorophyll-a absorption from the algal photobiont (typically weaker than in vascular plants)"},
+            {"wavelength_nm": 720, "description": "Subdued red edge from the photobiont"},
         ],
         "explanation": (
-            "Lichens are symbiotic organisms (fungus + photobiont) that colonize bare rock surfaces. "
-            "Their spectra are variable depending on pigmentation but typically show weaker chlorophyll "
-            "features than vascular plants. Biological soil crusts and lichen-covered rocks are mapped "
-            "in dryland and polar ecosystems."
+            "Lichens are symbiotic associations of a fungus and an algal or cyanobacterial photobiont, "
+            "often colonizing bare rock. Their visible-NIR spectrum is driven by the photobiont's "
+            "chlorophyll, but typically with a weaker red absorption and shallower red edge than vascular "
+            "plants. The yellow pigments characteristic of Acarospora (rhizocarpic and usnic acid) absorb "
+            "in the UV rather than the visible, so they do not produce diagnostic features in the "
+            "380-2500 nm range. Lichen-covered surfaces are mapped as a component of biological soil "
+            "crusts in dryland and polar ecosystems."
         ),
         "aliases": ["biological soil crust", "cryptobiotic crust"],
         "tags": ["vegetation", "lichen", "cryptogam", "crust", "rock"],
@@ -497,13 +506,15 @@ MANIFEST = [
         "chapter": "ChapterS",
         "filename": "splib07b_Illite_CU00-5B_Hi-Al+Quartz_ASDFRa_AREF.txt",
         "diagnostic_features": [
-            {"wavelength_nm": 2200, "description": "Al-OH clay absorption"},
-            {"wavelength_nm": 2340, "description": "Clay + quartz combination"},
+            {"wavelength_nm": 2200, "description": "Illite Al-OH combination band"},
+            {"wavelength_nm": 2350, "description": "Illite Al-OH / Mg-OH secondary combination band"},
         ],
         "explanation": (
-            "This clay-rich soil contains illite (Al-OH clay) mixed with quartz, showing moderate "
-            "Al-OH absorptions near 2200 nm. Clay-rich soils are common in humid climates and "
-            "agricultural land, and their spectral features help estimate clay content remotely."
+            "This clay-rich soil is dominated by illite (a K-bearing 2:1 layer mica clay) mixed with "
+            "quartz, showing a moderate Al-OH absorption near 2200 nm and a secondary feature near 2350 nm. "
+            "Quartz itself is featureless in the VSWIR, so all of the diagnostic SWIR absorptions come from "
+            "the illite component. The depth of the 2200 nm band can be used as a proxy for clay abundance "
+            "in calibrated soil-spectroscopy models."
         ),
         "aliases": ["clay soil", "illitic soil"],
         "tags": ["soil", "clay", "illite", "SWIR"],
@@ -517,12 +528,14 @@ MANIFEST = [
         "chapter": "ChapterS",
         "filename": "splib07b_Limestone_CU02-11A_ASDFRa_AREF.txt",
         "diagnostic_features": [
-            {"wavelength_nm": 2335, "description": "CO3 carbonate absorption"},
+            {"wavelength_nm": 2160, "description": "CO3 secondary combination band (weak)"},
+            {"wavelength_nm": 2335, "description": "CO3 main combination band (~2335-2340 nm) - diagnostic of carbonate"},
         ],
         "explanation": (
             "Calcareous soils and caliche (calcium carbonate crusts) show the diagnostic CO₃ "
-            "absorption near 2335 nm. These soils are common in arid and semi-arid regions and "
-            "on limestone parent material. Carbonate content can be estimated spectrally."
+            "combination band near 2335 nm with a secondary, weaker CO₃ feature near 2160 nm. These "
+            "soils are common on limestone parent material and in arid to semi-arid regions, where "
+            "carbonate content can be estimated spectrally from band depth."
         ),
         "aliases": ["caliche", "calcareous soil", "carbonate soil"],
         "tags": ["soil", "carbonate", "limestone", "SWIR"],
@@ -536,15 +549,16 @@ MANIFEST = [
         "chapter": "ChapterS",
         "filename": "splib07b_Pyroxene_Basalt_CU01-20A_ASDFRa_AREF.txt",
         "diagnostic_features": [
-            {"wavelength_nm": 1000, "description": "Fe2+ pyroxene absorption (~1 µm)"},
-            {"wavelength_nm": 2000, "description": "Fe2+ pyroxene absorption (~2 µm)"},
+            {"wavelength_nm": 1025, "description": "Fe2+ pyroxene crystal-field band (~1 µm; centered near 1025 nm in this sample)"},
+            {"wavelength_nm": 1970, "description": "Fe2+ pyroxene crystal-field band (~2 µm; subdued in this weathered soil, only ~3-4% deep)"},
         ],
         "explanation": (
-            "Basaltic soils derived from pyroxene-rich volcanic rock retain the Fe²⁺ absorptions "
-            "of pyroxene near 1000 and 2000 nm, though often subdued by weathering. These soils "
-            "are found on volcanic islands, lava flows, and shield volcano flanks."
+            "Basaltic soils derived from pyroxene-rich volcanic rock retain the Fe²⁺ crystal-field "
+            "absorptions of pyroxene near 1 µm and 2 µm, though both bands are subdued by weathering "
+            "— in this sample the 1 µm feature centers near 1025 nm and the 2 µm feature near 1970 nm. "
+            "These soils are found on volcanic islands, lava flows, and shield-volcano flanks."
         ),
-        "aliases": ["volcanic soil", "andisol", "mafic soil"],
+        "aliases": ["volcanic soil", "basaltic soil", "mafic soil"],
         "tags": ["soil", "volcanic", "pyroxene", "basalt", "mafic"],
     },
     # ── Water / Snow / Ice ─────────────────────────────────────────────────
@@ -557,14 +571,15 @@ MANIFEST = [
         "chapter": "ChapterL",
         "filename": "splib07b_Seawater_Open_Ocean_SW2_lwch_BECKa_AREF.txt",
         "diagnostic_features": [
-            {"wavelength_nm": 760, "description": "Liquid water absorption onset"},
-            {"wavelength_nm": 970, "description": "Liquid water combination band"},
+            {"wavelength_nm": 410, "description": "Blue reflectance peak (water is most transparent in the deep blue, ~400-420 nm)"},
+            {"wavelength_nm": 740, "description": "Reflectance has fallen to near zero across the NIR / SWIR from strong liquid-water absorption"},
         ],
         "explanation": (
-            "Clear open ocean water has low reflectance overall, with a blue-green peak (400–550 nm) "
-            "and near-zero reflectance beyond 700 nm due to strong liquid water absorption. "
-            "Ocean color remote sensing uses subtle variations in this blue-green region to map "
-            "phytoplankton, sediment, and dissolved organic matter."
+            "Clear open-ocean water reaches its (still very low) reflectance peak in the deep blue near "
+            "410 nm and falls monotonically through the visible. Past ~700 nm reflectance is essentially "
+            "zero because of strong liquid-water absorption. Ocean-color remote sensing exploits subtle "
+            "variations within the blue peak to map phytoplankton, suspended sediment, and coloured "
+            "dissolved organic matter."
         ),
         "aliases": ["ocean water", "saltwater", "marine water"],
         "tags": ["water", "ocean", "marine", "liquid water"],
@@ -598,15 +613,16 @@ MANIFEST = [
         "chapter": "ChapterL",
         "filename": "splib07b_Water+Montmor_SWy-2+16.5g-l_ASDFRa_AREF.txt",
         "diagnostic_features": [
-            {"wavelength_nm": 700, "description": "Sediment-dominated red reflectance"},
+            {"wavelength_nm": 710, "description": "Sediment-dominated red-NIR reflectance peak (clay particles scatter strongly)"},
             {"wavelength_nm": 970, "description": "Liquid water absorption"},
             {"wavelength_nm": 1200, "description": "Liquid water overtone"},
         ],
         "explanation": (
-            "High suspended sediment concentrations shift water reflectance from blue-green toward "
-            "red-NIR. This montmorillonite-water mixture at 16.5 g/L shows dramatically increased "
-            "reflectance compared to clear water, illustrating sediment plume detection in rivers "
-            "and coastal areas."
+            "High suspended-sediment concentrations shift water reflectance from blue-green toward red "
+            "and NIR — this montmorillonite-water mixture at 16.5 g/L peaks near 710 nm because the clay "
+            "particles scatter strongly there. Liquid-water absorptions at 970 and 1200 nm are still "
+            "present but partly filled in by the sediment scattering. Used to detect sediment plumes in "
+            "rivers and coastal areas."
         ),
         "aliases": ["muddy water", "sediment-laden water", "suspended sediment"],
         "tags": ["water", "turbid", "sediment", "clay"],
@@ -642,13 +658,15 @@ MANIFEST = [
         "chapter": "ChapterL",
         "filename": "splib07b_Melting_snow_mSnw09_(slush)_ASDFRa_AREF.txt",
         "diagnostic_features": [
-            {"wavelength_nm": 970, "description": "Liquid water absorption (melt water)"},
-            {"wavelength_nm": 1200, "description": "Liquid water overtone"},
+            {"wavelength_nm": 1000, "description": "Combined liquid-water + H2O-ice absorption (band shifts toward 1000 nm in mixed-phase slush)"},
+            {"wavelength_nm": 1230, "description": "H2O combination overtone (slightly shifted toward 1230 nm by the ice fraction)"},
         ],
         "explanation": (
-            "Slush (partially melted snow) has lower visible reflectance than fresh snow and "
-            "shows both ice crystal and liquid water absorption features. The mixture of liquid "
-            "and solid water creates intermediate spectral properties used in snowmelt monitoring."
+            "Slush (partially melted snow) has lower visible reflectance than fresh snow and shows "
+            "broadened absorptions that combine liquid water and H₂O-ice features. In this mixed-phase "
+            "sample the bands center near 1000 and 1230 nm — slightly shifted from pure liquid water "
+            "(970 / 1200 nm) toward the ice positions. This intermediate behavior is used in snowmelt "
+            "monitoring."
         ),
         "aliases": ["slush", "wet snow", "melting snow"],
         "tags": ["snow", "ice", "cryosphere", "melt", "liquid water"],
@@ -665,7 +683,7 @@ MANIFEST = [
             {"wavelength_nm": 1030, "description": "H2O ice absorption"},
             {"wavelength_nm": 1250, "description": "H2O ice overtone"},
             {"wavelength_nm": 1500, "description": "Strong H2O ice absorption"},
-            {"wavelength_nm": 2020, "description": "H2O ice combination band"},
+            {"wavelength_nm": 2035, "description": "H2O ice combination band (~2030-2040 nm)"},
         ],
         "explanation": (
             "Pure water ice measured at 77K shows very deep, sharp absorption bands at the ice "
@@ -685,13 +703,14 @@ MANIFEST = [
         "chapter": "ChapterA",
         "filename": "splib07b_Asphalt_GDS376_Blck_Road_old_ASDFRa_AREF.txt",
         "diagnostic_features": [
-            {"wavelength_nm": 2300, "description": "C-H hydrocarbon combination (aged bitumen)"},
+            {"wavelength_nm": 2310, "description": "Weak C-H combination band from residual bitumen (much subdued by oxidation)"},
         ],
         "explanation": (
-            "Aged asphalt shows low, relatively flat reflectance from road bitumen. The spectrum "
-            "brightens slightly with weathering as the dark hydrocarbon binder oxidizes. Asphalt "
-            "mapping from airborne hyperspectral data supports urban heat island studies and "
-            "impervious surface mapping."
+            "Aged road asphalt has a low, fairly flat reflectance. As the bitumen binder oxidizes with "
+            "weathering, the diagnostic C-H absorptions of fresh asphalt (near 1730 and 2310 nm) become "
+            "subdued and the surface brightens slightly as aggregate is exposed. Mapping aged versus fresh "
+            "asphalt from airborne hyperspectral data supports urban heat island studies and impervious "
+            "surface mapping."
         ),
         "aliases": ["bituminous road", "tarmac", "road surface"],
         "tags": ["manmade", "urban", "asphalt", "pavement", "impervious"],
@@ -705,13 +724,15 @@ MANIFEST = [
         "chapter": "ChapterA",
         "filename": "splib07b_Asphalt_Tar_GDS346_Blck_Roof_ASDFRa_AREF.txt",
         "diagnostic_features": [
-            {"wavelength_nm": 1730, "description": "C-H hydrocarbon overtone"},
-            {"wavelength_nm": 2300, "description": "C-H combination band"},
+            {"wavelength_nm": 1755, "description": "Very weak C-H hydrocarbon overtone (~1-2% depth in this dark sample)"},
+            {"wavelength_nm": 2305, "description": "Very weak C-H combination band (~1-2% depth in this dark sample)"},
         ],
         "explanation": (
-            "Fresh tar/roofing asphalt is darker and shows hydrocarbon C-H absorption features "
-            "from bitumen. These features distinguish fresh tar from aged road asphalt and from "
-            "other dark materials in urban mapping."
+            "Tar/roofing asphalt has very low overall reflectance (a few percent) because of the dark "
+            "hydrocarbon binder. C-H absorption features near 1730 and 2300 nm are present in principle "
+            "but extremely subtle in this very dark sample (typically only 1-2% depth). The spectrum's "
+            "main diagnostic in urban hyperspectral mapping is its uniformly low reflectance combined "
+            "with these weak C-H signatures."
         ),
         "aliases": ["tar paper", "roofing tar", "built-up roofing"],
         "tags": ["manmade", "urban", "asphalt", "roofing", "hydrocarbon"],
@@ -725,14 +746,16 @@ MANIFEST = [
         "chapter": "ChapterA",
         "filename": "splib07b_Concrete_GDS375_Lt_Gry_Road_ASDFRa_AREF.txt",
         "diagnostic_features": [
-            {"wavelength_nm": 2335, "description": "CO3 from calcium carbonate in cement"},
+            {"wavelength_nm": 2340, "description": "Weak CO3 combination band (~2% depth) from atmospheric carbonation and any carbonate aggregate"},
         ],
         "explanation": (
-            "Portland cement concrete has a grey-white spectrum with moderate reflectance and a "
-            "carbonate feature near 2335 nm from the calcium carbonate/silicate binder. This "
-            "distinguishes concrete from asphalt (dark, hydrocarbon features) in urban mapping."
+            "Portland cement concrete has a grey-white spectrum with moderate, fairly flat reflectance. "
+            "Its principal binder is calcium silicate hydrate (C-S-H), but atmospheric CO₂ slowly "
+            "carbonates the surface to CaCO₃, producing a weak (~2% depth) CO₃ absorption near 2340 nm. "
+            "This subtle carbonate feature, together with the absence of any C-H (hydrocarbon) features, "
+            "distinguishes concrete from dark, hydrocarbon-bearing asphalt in urban hyperspectral mapping."
         ),
-        "aliases": ["cement", "Portland cement", "pavement"],
+        "aliases": ["Portland cement concrete", "pavement", "cement (informal)"],
         "tags": ["manmade", "urban", "concrete", "pavement", "carbonate"],
     },
     {
@@ -744,14 +767,14 @@ MANIFEST = [
         "chapter": "ChapterA",
         "filename": "splib07b_Brick_GDS349_Paving_Red_ASDFRa_AREF.txt",
         "diagnostic_features": [
-            {"wavelength_nm": 550, "description": "Iron oxide red reflectance peak"},
-            {"wavelength_nm": 860, "description": "Fe3+ absorption from fired clay"},
+            {"wavelength_nm": 530, "description": "Hematite Fe3+ charge-transfer absorption complex in the visible (gives the red color)"},
+            {"wavelength_nm": 875, "description": "Hematite Fe3+ crystal-field absorption (~870-880 nm) from kiln-fired iron oxide"},
         ],
         "explanation": (
-            "Red brick derives its color from hematite (Fe₂O₃) formed during kiln firing of iron-rich "
-            "clay. The spectrum shows a red-orange visible region from iron oxides and silicate "
-            "features in the SWIR. Brick is mapped to distinguish roofing materials and "
-            "building types in urban hyperspectral surveys."
+            "Red paving brick gets its color from hematite (α-Fe₂O₃) formed during kiln-firing of "
+            "iron-rich clay. Fe³⁺ charge-transfer absorption in the blue-green produces the strong rise "
+            "of reflectance through the red, and a secondary Fe³⁺ crystal-field band appears near 875 nm. "
+            "Brick is mapped to distinguish roofing and paving materials from other red urban surfaces."
         ),
         "aliases": ["fired clay", "terracotta", "clay brick"],
         "tags": ["manmade", "urban", "brick", "iron oxide", "clay"],
