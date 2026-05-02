@@ -38392,15 +38392,11 @@
     ],
     "diagnostic_features": [
       {
-        "wavelength_nm": 2160,
-        "description": "CO3 overtone"
-      },
-      {
         "wavelength_nm": 2320,
-        "description": "Strong CO3 combination band (~10 nm shift from calcite)"
+        "description": "Strong CO3 combination band (~10 nm shift toward shorter wavelength than calcite's ~2335 nm)"
       }
     ],
-    "explanation": "Dolomite (CaMg(CO₃)₂) is spectrally similar to calcite but with its main CO₃ feature shifted to ~2320 nm (vs ~2340 nm for calcite). This ~10–20 nm shift is a classic SWIR discrimination problem used in carbonate mapping from airborne sensors.",
+    "explanation": "Dolomite (CaMg(CO₃)₂) is spectrally similar to calcite but with its main CO₃ feature shifted to ~2320 nm (vs ~2335 nm for calcite). This ~10-20 nm shift is the classic SWIR discrimination problem in carbonate mapping from airborne sensors. The secondary CO₃ overtone near 2160 nm is too shallow to be a reliable marker in this sample.",
     "aliases": [
       "dolostone"
     ],
@@ -51194,12 +51190,12 @@
         "description": "Fe3+ charge transfer absorption"
       },
       {
-        "wavelength_nm": 660,
-        "description": "Fe3+ 6A1 -> 4T2 crystal field band (broader and weaker than hematite)"
+        "wavelength_nm": 680,
+        "description": "Fe3+ 6A1 -> 4T2 crystal-field band (~660-680 nm; broader and weaker than hematite's)"
       },
       {
         "wavelength_nm": 920,
-        "description": "Fe3+ 6A1 -> 4T1 crystal field band (~915-925 nm; longer wavelength than hematite's ~870 nm)"
+        "description": "Fe3+ 6A1 -> 4T1 crystal-field band (~920 nm; longer wavelength than hematite's ~870 nm)"
       }
     ],
     "explanation": "Goethite (α-FeOOH) is the most common iron oxyhydroxide in weathered profiles, giving soils a yellow-brown color. Its main Fe³⁺ band sits at a longer wavelength (~920 nm) than hematite's (~870 nm), and its visible absorption complex is broader. Together these differences make hematite and goethite distinguishable with hyperspectral data.",
@@ -57599,8 +57595,8 @@
         "description": "Fe3+ charge transfer"
       },
       {
-        "wavelength_nm": 930,
-        "description": "Fe3+ crystal field"
+        "wavelength_nm": 895,
+        "description": "Fe3+ crystal-field band (~890-900 nm)"
       },
       {
         "wavelength_nm": 2270,
@@ -89594,12 +89590,12 @@
     ],
     "diagnostic_features": [
       {
-        "wavelength_nm": 530,
-        "description": "Fe3+ charge-transfer absorption in the visible (responsible for the dark green-black color)"
+        "wavelength_nm": 560,
+        "description": "Visible Fe3+ charge-transfer absorption complex (subtle continuum drop into the green-blue)"
       },
       {
-        "wavelength_nm": 1050,
-        "description": "Weak Fe3+ / minor Fe2+ crystal-field absorption (much weaker than the classic 1 µm band of Fe2+ pyroxenes)"
+        "wavelength_nm": 1073,
+        "description": "Weak Fe3+ / minor Fe2+ crystal-field absorption (much shallower than the classic 1 µm band of Fe2+ pyroxenes)"
       }
     ],
     "explanation": "Acmite (also called aegirine, NaFe³⁺Si₂O₆) is a sodic clinopyroxene whose iron is dominantly Fe³⁺. Unlike the more common Fe²⁺ pyroxenes (orthopyroxene, augite, diopside) - which show the textbook ~1 µm and ~2 µm crystal-field bands used in planetary mapping - acmite has very low overall reflectance and only weak crystal-field features. Its spectrum is instead dominated by Fe³⁺ charge-transfer absorptions in the visible.",
@@ -115234,18 +115230,10 @@
     "diagnostic_features": [
       {
         "wavelength_nm": 680,
-        "description": "Chlorophyll-a absorption"
-      },
-      {
-        "wavelength_nm": 720,
-        "description": "Red edge"
-      },
-      {
-        "wavelength_nm": 970,
-        "description": "Liquid water"
+        "description": "Chlorophyll-a absorption (subdued in this dry-season sample)"
       }
     ],
-    "explanation": "Cheatgrass (Bromus tectorum) is an invasive annual grass that greens up earlier in spring than most native vegetation. The spectrum shows the standard green-vegetation signature (chlorophyll absorption near 680 nm, red edge near 720 nm, leaf water at 970 nm); the value for invasive-species mapping comes from this early phenological greening rather than from a uniquely shaped spectrum.",
+    "explanation": "Cheatgrass (Bromus tectorum) is an invasive annual grass that greens up earlier in spring than most native vegetation. The spectrum shows only a subdued chlorophyll absorption near 680 nm; the red edge and leaf-water features are barely present in this drier sample. Cheatgrass's value for invasive-species mapping comes from its early phenological greening rather than from a uniquely shaped spectrum.",
     "aliases": [
       "Bromus tectorum",
       "downy brome",
@@ -153631,15 +153619,15 @@
     ],
     "diagnostic_features": [
       {
-        "wavelength_nm": 1000,
-        "description": "Fe2+ pyroxene absorption (~1 µm)"
+        "wavelength_nm": 1025,
+        "description": "Fe2+ pyroxene crystal-field band (~1 µm; centered near 1025 nm in this sample)"
       },
       {
-        "wavelength_nm": 2000,
-        "description": "Fe2+ pyroxene absorption (~2 µm)"
+        "wavelength_nm": 1970,
+        "description": "Fe2+ pyroxene crystal-field band (~2 µm; subdued in this weathered soil, only ~3-4% deep)"
       }
     ],
-    "explanation": "Basaltic soils derived from pyroxene-rich volcanic rock retain the Fe²⁺ absorptions of pyroxene near 1000 and 2000 nm, though often subdued by weathering. These soils are found on volcanic islands, lava flows, and shield volcano flanks.",
+    "explanation": "Basaltic soils derived from pyroxene-rich volcanic rock retain the Fe²⁺ crystal-field absorptions of pyroxene near 1 µm and 2 µm, though both bands are subdued by weathering — in this sample the 1 µm feature centers near 1025 nm and the 2 µm feature near 1970 nm. These soils are found on volcanic islands, lava flows, and shield-volcano flanks.",
     "aliases": [
       "volcanic soil",
       "basaltic soil",
@@ -160032,15 +160020,15 @@
     ],
     "diagnostic_features": [
       {
-        "wavelength_nm": 480,
-        "description": "Blue-green peak (water is most transparent in the 400-550 nm band)"
+        "wavelength_nm": 410,
+        "description": "Blue reflectance peak (water is most transparent in the deep blue, ~400-420 nm)"
       },
       {
         "wavelength_nm": 740,
-        "description": "Liquid water NIR absorption shoulder; reflectance falls to near zero past ~720 nm"
+        "description": "Reflectance has fallen to near zero across the NIR / SWIR from strong liquid-water absorption"
       }
     ],
-    "explanation": "Clear open ocean water has low overall reflectance, peaks weakly in the blue-green (400-550 nm), and falls to near zero across the NIR and SWIR because of strong liquid water absorption. Ocean color remote sensing exploits subtle variations within the blue-green peak to map phytoplankton, suspended sediment, and coloured dissolved organic matter.",
+    "explanation": "Clear open-ocean water reaches its (still very low) reflectance peak in the deep blue near 410 nm and falls monotonically through the visible. Past ~700 nm reflectance is essentially zero because of strong liquid-water absorption. Ocean-color remote sensing exploits subtle variations within the blue peak to map phytoplankton, suspended sediment, and coloured dissolved organic matter.",
     "aliases": [
       "ocean water",
       "saltwater",
@@ -172832,8 +172820,8 @@
     ],
     "diagnostic_features": [
       {
-        "wavelength_nm": 700,
-        "description": "Sediment-dominated red reflectance"
+        "wavelength_nm": 710,
+        "description": "Sediment-dominated red-NIR reflectance peak (clay particles scatter strongly)"
       },
       {
         "wavelength_nm": 970,
@@ -172844,7 +172832,7 @@
         "description": "Liquid water overtone"
       }
     ],
-    "explanation": "High suspended sediment concentrations shift water reflectance from blue-green toward red-NIR. This montmorillonite-water mixture at 16.5 g/L shows dramatically increased reflectance compared to clear water, illustrating sediment plume detection in rivers and coastal areas.",
+    "explanation": "High suspended-sediment concentrations shift water reflectance from blue-green toward red and NIR — this montmorillonite-water mixture at 16.5 g/L peaks near 710 nm because the clay particles scatter strongly there. Liquid-water absorptions at 970 and 1200 nm are still present but partly filled in by the sediment scattering. Used to detect sediment plumes in rivers and coastal areas.",
     "aliases": [
       "muddy water",
       "sediment-laden water",
@@ -185640,15 +185628,15 @@
     ],
     "diagnostic_features": [
       {
-        "wavelength_nm": 970,
-        "description": "Liquid water absorption (melt water)"
+        "wavelength_nm": 1000,
+        "description": "Combined liquid-water + H2O-ice absorption (band shifts toward 1000 nm in mixed-phase slush)"
       },
       {
-        "wavelength_nm": 1200,
-        "description": "Liquid water overtone"
+        "wavelength_nm": 1230,
+        "description": "H2O combination overtone (slightly shifted toward 1230 nm by the ice fraction)"
       }
     ],
-    "explanation": "Slush (partially melted snow) has lower visible reflectance than fresh snow and shows both ice crystal and liquid water absorption features. The mixture of liquid and solid water creates intermediate spectral properties used in snowmelt monitoring.",
+    "explanation": "Slush (partially melted snow) has lower visible reflectance than fresh snow and shows broadened absorptions that combine liquid water and H₂O-ice features. In this mixed-phase sample the bands center near 1000 and 1230 nm — slightly shifted from pure liquid water (970 / 1200 nm) toward the ice positions. This intermediate behavior is used in snowmelt monitoring.",
     "aliases": [
       "slush",
       "wet snow",
@@ -192053,8 +192041,8 @@
         "description": "Strong H2O ice absorption"
       },
       {
-        "wavelength_nm": 2020,
-        "description": "H2O ice combination band"
+        "wavelength_nm": 2035,
+        "description": "H2O ice combination band (~2030-2040 nm)"
       }
     ],
     "explanation": "Pure water ice measured at 77K shows very deep, sharp absorption bands at the ice lattice vibrational frequencies. These features are used as reference for ice detection on planetary surfaces (Europa, Enceladus, Mars polar caps) and terrestrial glaciers.",
@@ -204847,15 +204835,15 @@
     ],
     "diagnostic_features": [
       {
-        "wavelength_nm": 1730,
-        "description": "C-H hydrocarbon overtone"
+        "wavelength_nm": 1755,
+        "description": "Very weak C-H hydrocarbon overtone (~1-2% depth in this dark sample)"
       },
       {
-        "wavelength_nm": 2300,
-        "description": "C-H combination band"
+        "wavelength_nm": 2305,
+        "description": "Very weak C-H combination band (~1-2% depth in this dark sample)"
       }
     ],
-    "explanation": "Fresh tar/roofing asphalt is darker and shows hydrocarbon C-H absorption features from bitumen. These features distinguish fresh tar from aged road asphalt and from other dark materials in urban mapping.",
+    "explanation": "Tar/roofing asphalt has very low overall reflectance (a few percent) because of the dark hydrocarbon binder. C-H absorption features near 1730 and 2300 nm are present in principle but extremely subtle in this very dark sample (typically only 1-2% depth). The spectrum's main diagnostic in urban hyperspectral mapping is its uniformly low reflectance combined with these weak C-H signatures.",
     "aliases": [
       "tar paper",
       "roofing tar",
@@ -211249,10 +211237,10 @@
     "diagnostic_features": [
       {
         "wavelength_nm": 2340,
-        "description": "CO3 combination band from atmospheric carbonation and any carbonate aggregate (~2335-2347 nm)"
+        "description": "Weak CO3 combination band (~2% depth) from atmospheric carbonation and any carbonate aggregate"
       }
     ],
-    "explanation": "Portland cement concrete has a grey-white spectrum with moderate, fairly flat reflectance. Its principal binder is calcium silicate hydrate (C-S-H), but atmospheric CO₂ slowly carbonates the surface to CaCO₃, producing a CO₃ absorption near 2340 nm. This carbonate feature, together with the absence of any C-H (hydrocarbon) features, distinguishes concrete from dark, hydrocarbon-bearing asphalt in urban hyperspectral mapping.",
+    "explanation": "Portland cement concrete has a grey-white spectrum with moderate, fairly flat reflectance. Its principal binder is calcium silicate hydrate (C-S-H), but atmospheric CO₂ slowly carbonates the surface to CaCO₃, producing a weak (~2% depth) CO₃ absorption near 2340 nm. This subtle carbonate feature, together with the absence of any C-H (hydrocarbon) features, distinguishes concrete from dark, hydrocarbon-bearing asphalt in urban hyperspectral mapping.",
     "aliases": [
       "Portland cement concrete",
       "pavement",
