@@ -10,6 +10,7 @@ dependencies = [
     "uvicorn[standard]>=0.29",
     "pydantic>=2.7",
     "python-dotenv>=1.0",
+    "jupyter-bokeh>=4.0.5",
 ]
 
 [dependency-groups]
